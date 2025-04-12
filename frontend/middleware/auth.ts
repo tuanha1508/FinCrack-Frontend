@@ -13,9 +13,9 @@ export default defineNuxtRouteMiddleware((to: RouteLocationNormalized) => {
   const { isAuthenticated } = useAuth();
   const authPages = ['/sign-in', '/sign-up', '/forgot-password'];
   
-  // If route is an auth page and user is authenticated, redirect to home
+  // If route is an auth page and user is authenticated, redirect to dashboard
   if (authPages.includes(to.path) && isAuthenticated.value) {
-    return navigateTo('/');
+    return navigateTo('/dashboard');
   }
   
   // If route requires auth and user is not authenticated, redirect to login

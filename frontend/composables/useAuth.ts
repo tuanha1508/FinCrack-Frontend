@@ -90,8 +90,8 @@ export function useAuth() {
         user.value = response.data.user;
         isAuthenticated.value = true;
         
-        // Navigate to home page
-        router.push('/');
+        // Navigate to dashboard page instead of home
+        router.push('/dashboard');
       }
     } catch (err: any) {
       error.value = err.message || 'Login failed';
@@ -142,8 +142,8 @@ export function useAuth() {
         user.value = response.data.user;
         isAuthenticated.value = true;
         
-        // Navigate to home page
-        router.push('/');
+        // Navigate to dashboard page instead of home
+        router.push('/dashboard');
       }
     } catch (err: any) {
       error.value = err.message || `${provider} login failed`;
