@@ -3,62 +3,62 @@ import { Server } from 'node:http';
 import { resolve, dirname, join } from 'node:path';
 import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, getRequestURL, getResponseHeader, getResponseStatus, createError, getQuery as getQuery$1, getCookie, lazyEventHandler, useBase, createApp, createRouter as createRouter$1, toNodeListener, getRouterParam, readBody, getResponseStatusText } from 'file://E:/FinHack/frontend/node_modules/h3/dist/index.mjs';
-import _RemarkEmoji from 'file://E:/FinHack/frontend/node_modules/remark-emoji/index.js';
-import { createStorage, prefixStorage } from 'file://E:/FinHack/frontend/node_modules/unstorage/dist/index.mjs';
-import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, joinRelativeURL, withLeadingSlash, withoutTrailingSlash, isRelative } from 'file://E:/FinHack/frontend/node_modules/ufo/dist/index.mjs';
-import { hash as hash$1 } from 'file://E:/FinHack/frontend/node_modules/ohash/dist/index.mjs';
-import defu, { defuFn, defu as defu$1 } from 'file://E:/FinHack/frontend/node_modules/defu/dist/defu.mjs';
-import { extname } from 'file://E:/FinHack/frontend/node_modules/pathe/dist/index.mjs';
-import { snakeCase, kebabCase, pascalCase, camelCase } from 'file://E:/FinHack/frontend/node_modules/scule/dist/index.mjs';
-import { unified } from 'file://E:/FinHack/frontend/node_modules/unified/index.js';
-import { toString as toString$1 } from 'file://E:/FinHack/frontend/node_modules/mdast-util-to-string/index.js';
-import { postprocess, preprocess } from 'file://E:/FinHack/frontend/node_modules/micromark/dev/index.js';
-import { stringifyPosition } from 'file://E:/FinHack/frontend/node_modules/unist-util-stringify-position/index.js';
-import { markdownLineEnding, markdownSpace } from 'file://E:/FinHack/frontend/node_modules/micromark-util-character/dev/index.js';
-import { push, splice } from 'file://E:/FinHack/frontend/node_modules/micromark-util-chunked/dev/index.js';
-import { resolveAll } from 'file://E:/FinHack/frontend/node_modules/micromark-util-resolve-all/index.js';
-import { normalizeUri } from 'file://E:/FinHack/frontend/node_modules/micromark-util-sanitize-uri/dev/index.js';
-import remarkParse from 'file://E:/FinHack/frontend/node_modules/remark-parse/index.js';
-import remark2rehype from 'file://E:/FinHack/frontend/node_modules/remark-rehype/index.js';
-import remarkMDC, { parseFrontMatter } from 'file://E:/FinHack/frontend/node_modules/remark-mdc/dist/index.mjs';
-import remarkGFM from 'file://E:/FinHack/frontend/node_modules/remark-gfm/index.js';
-import rehypeExternalLinks from 'file://E:/FinHack/frontend/node_modules/rehype-external-links/index.js';
-import rehypeSortAttributeValues from 'file://E:/FinHack/frontend/node_modules/rehype-sort-attribute-values/index.js';
-import rehypeSortAttributes from 'file://E:/FinHack/frontend/node_modules/rehype-sort-attributes/index.js';
-import rehypeRaw from 'file://E:/FinHack/frontend/node_modules/rehype-raw/index.js';
-import { detab } from 'file://E:/FinHack/frontend/node_modules/detab/index.js';
-import { toString } from 'file://E:/FinHack/frontend/node_modules/hast-util-to-string/index.js';
-import Slugger from 'file://E:/FinHack/frontend/node_modules/github-slugger/index.js';
-import destr, { destr as destr$1 } from 'file://E:/FinHack/frontend/node_modules/destr/dist/index.mjs';
-import slugify from 'file://E:/FinHack/frontend/node_modules/slugify/slugify.js';
-import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file://E:/FinHack/frontend/node_modules/vue-bundle-renderer/dist/runtime.mjs';
-import { createHead as createHead$1, propsToString, renderSSRHead } from 'file://E:/FinHack/frontend/node_modules/nuxt/node_modules/unhead/dist/server.mjs';
-import { isVNode, toValue, isRef } from 'file://E:/FinHack/frontend/node_modules/vue/index.mjs';
-import { walkResolver } from 'file://E:/FinHack/frontend/node_modules/nuxt/node_modules/unhead/dist/utils.mjs';
-import { renderToString } from 'file://E:/FinHack/frontend/node_modules/vue/server-renderer/index.mjs';
-import { klona } from 'file://E:/FinHack/frontend/node_modules/klona/dist/index.mjs';
-import { stringify, uneval } from 'file://E:/FinHack/frontend/node_modules/devalue/index.js';
-import { DeprecationsPlugin, PromisesPlugin, TemplateParamsPlugin, AliasSortingPlugin } from 'file://E:/FinHack/frontend/node_modules/nuxt/node_modules/unhead/dist/plugins.mjs';
-import { createHooks } from 'file://E:/FinHack/frontend/node_modules/hookable/dist/index.mjs';
-import { createFetch, Headers as Headers$1 } from 'file://E:/FinHack/frontend/node_modules/ofetch/dist/node.mjs';
-import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file://E:/FinHack/frontend/node_modules/node-mock-http/dist/index.mjs';
-import unstorage_47drivers_47fs from 'file://E:/FinHack/frontend/node_modules/unstorage/drivers/fs.mjs';
-import { digest } from 'file://E:/FinHack/frontend/node_modules/nitropack/node_modules/ohash/dist/index.mjs';
-import { toRouteMatcher, createRouter } from 'file://E:/FinHack/frontend/node_modules/radix3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestHeader, setResponseHeaders, setResponseStatus, send, getRequestHeaders, setResponseHeader, getRequestURL, getResponseHeader, getResponseStatus, createError, getQuery as getQuery$1, getCookie, lazyEventHandler, useBase, createApp, createRouter as createRouter$1, toNodeListener, getRouterParam, readBody, getResponseStatusText } from 'file://E:/FinCrack/frontend/node_modules/h3/dist/index.mjs';
+import _RemarkEmoji from 'file://E:/FinCrack/frontend/node_modules/remark-emoji/index.js';
+import { createStorage, prefixStorage } from 'file://E:/FinCrack/frontend/node_modules/unstorage/dist/index.mjs';
+import { parseURL, withoutBase, joinURL, getQuery, withQuery, withTrailingSlash, joinRelativeURL, withLeadingSlash, withoutTrailingSlash, isRelative } from 'file://E:/FinCrack/frontend/node_modules/ufo/dist/index.mjs';
+import { hash as hash$1 } from 'file://E:/FinCrack/frontend/node_modules/ohash/dist/index.mjs';
+import defu, { defuFn, defu as defu$1 } from 'file://E:/FinCrack/frontend/node_modules/defu/dist/defu.mjs';
+import { extname } from 'file://E:/FinCrack/frontend/node_modules/pathe/dist/index.mjs';
+import { snakeCase, kebabCase, pascalCase, camelCase } from 'file://E:/FinCrack/frontend/node_modules/scule/dist/index.mjs';
+import { unified } from 'file://E:/FinCrack/frontend/node_modules/unified/index.js';
+import { toString as toString$1 } from 'file://E:/FinCrack/frontend/node_modules/mdast-util-to-string/index.js';
+import { postprocess, preprocess } from 'file://E:/FinCrack/frontend/node_modules/micromark/dev/index.js';
+import { stringifyPosition } from 'file://E:/FinCrack/frontend/node_modules/unist-util-stringify-position/index.js';
+import { markdownLineEnding, markdownSpace } from 'file://E:/FinCrack/frontend/node_modules/micromark-util-character/dev/index.js';
+import { push, splice } from 'file://E:/FinCrack/frontend/node_modules/micromark-util-chunked/dev/index.js';
+import { resolveAll } from 'file://E:/FinCrack/frontend/node_modules/micromark-util-resolve-all/index.js';
+import { normalizeUri } from 'file://E:/FinCrack/frontend/node_modules/micromark-util-sanitize-uri/dev/index.js';
+import remarkParse from 'file://E:/FinCrack/frontend/node_modules/remark-parse/index.js';
+import remark2rehype from 'file://E:/FinCrack/frontend/node_modules/remark-rehype/index.js';
+import remarkMDC, { parseFrontMatter } from 'file://E:/FinCrack/frontend/node_modules/remark-mdc/dist/index.mjs';
+import remarkGFM from 'file://E:/FinCrack/frontend/node_modules/remark-gfm/index.js';
+import rehypeExternalLinks from 'file://E:/FinCrack/frontend/node_modules/rehype-external-links/index.js';
+import rehypeSortAttributeValues from 'file://E:/FinCrack/frontend/node_modules/rehype-sort-attribute-values/index.js';
+import rehypeSortAttributes from 'file://E:/FinCrack/frontend/node_modules/rehype-sort-attributes/index.js';
+import rehypeRaw from 'file://E:/FinCrack/frontend/node_modules/rehype-raw/index.js';
+import { detab } from 'file://E:/FinCrack/frontend/node_modules/detab/index.js';
+import { toString } from 'file://E:/FinCrack/frontend/node_modules/hast-util-to-string/index.js';
+import Slugger from 'file://E:/FinCrack/frontend/node_modules/github-slugger/index.js';
+import destr, { destr as destr$1 } from 'file://E:/FinCrack/frontend/node_modules/destr/dist/index.mjs';
+import slugify from 'file://E:/FinCrack/frontend/node_modules/slugify/slugify.js';
+import { createRenderer, getRequestDependencies, getPreloadLinks, getPrefetchLinks } from 'file://E:/FinCrack/frontend/node_modules/vue-bundle-renderer/dist/runtime.mjs';
+import { createHead as createHead$1, propsToString, renderSSRHead } from 'file://E:/FinCrack/frontend/node_modules/nuxt/node_modules/unhead/dist/server.mjs';
+import { isVNode, toValue, isRef } from 'file://E:/FinCrack/frontend/node_modules/vue/index.mjs';
+import { walkResolver } from 'file://E:/FinCrack/frontend/node_modules/nuxt/node_modules/unhead/dist/utils.mjs';
+import { renderToString } from 'file://E:/FinCrack/frontend/node_modules/vue/server-renderer/index.mjs';
+import { klona } from 'file://E:/FinCrack/frontend/node_modules/klona/dist/index.mjs';
+import { stringify, uneval } from 'file://E:/FinCrack/frontend/node_modules/devalue/index.js';
+import { DeprecationsPlugin, PromisesPlugin, TemplateParamsPlugin, AliasSortingPlugin } from 'file://E:/FinCrack/frontend/node_modules/nuxt/node_modules/unhead/dist/plugins.mjs';
+import { createHooks } from 'file://E:/FinCrack/frontend/node_modules/hookable/dist/index.mjs';
+import { createFetch, Headers as Headers$1 } from 'file://E:/FinCrack/frontend/node_modules/ofetch/dist/node.mjs';
+import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file://E:/FinCrack/frontend/node_modules/node-mock-http/dist/index.mjs';
+import unstorage_47drivers_47fs from 'file://E:/FinCrack/frontend/node_modules/unstorage/drivers/fs.mjs';
+import { digest } from 'file://E:/FinCrack/frontend/node_modules/nitropack/node_modules/ohash/dist/index.mjs';
+import { toRouteMatcher, createRouter } from 'file://E:/FinCrack/frontend/node_modules/radix3/dist/index.mjs';
 import { readFile } from 'node:fs/promises';
-import consola, { consola as consola$1 } from 'file://E:/FinHack/frontend/node_modules/consola/dist/index.mjs';
-import { ErrorParser } from 'file://E:/FinHack/frontend/node_modules/youch-core/build/index.js';
-import { Youch } from 'file://E:/FinHack/frontend/node_modules/youch/build/index.js';
-import { SourceMapConsumer } from 'file://E:/FinHack/frontend/node_modules/source-map/source-map.js';
+import consola, { consola as consola$1 } from 'file://E:/FinCrack/frontend/node_modules/consola/dist/index.mjs';
+import { ErrorParser } from 'file://E:/FinCrack/frontend/node_modules/youch-core/build/index.js';
+import { Youch } from 'file://E:/FinCrack/frontend/node_modules/youch/build/index.js';
+import { SourceMapConsumer } from 'file://E:/FinCrack/frontend/node_modules/source-map/source-map.js';
 import { AsyncLocalStorage } from 'node:async_hooks';
-import { getContext } from 'file://E:/FinHack/frontend/node_modules/unctx/dist/index.mjs';
-import { captureRawStackTrace, parseRawStackTrace } from 'file://E:/FinHack/frontend/node_modules/errx/dist/index.js';
+import { getContext } from 'file://E:/FinCrack/frontend/node_modules/unctx/dist/index.mjs';
+import { captureRawStackTrace, parseRawStackTrace } from 'file://E:/FinCrack/frontend/node_modules/errx/dist/index.js';
 import { fileURLToPath } from 'node:url';
-import { ipxFSStorage, ipxHttpStorage, createIPX, createIPXH3Handler } from 'file://E:/FinHack/frontend/node_modules/ipx/dist/index.mjs';
-import { isAbsolute } from 'file://E:/FinHack/frontend/node_modules/@nuxt/image/node_modules/pathe/dist/index.mjs';
+import { ipxFSStorage, ipxHttpStorage, createIPX, createIPXH3Handler } from 'file://E:/FinCrack/frontend/node_modules/ipx/dist/index.mjs';
+import { isAbsolute } from 'file://E:/FinCrack/frontend/node_modules/@nuxt/image/node_modules/pathe/dist/index.mjs';
 
-const serverAssets = [{"baseName":"server","dir":"E:/FinHack/frontend/server/assets"}];
+const serverAssets = [{"baseName":"server","dir":"E:/FinCrack/frontend/server/assets"}];
 
 const assets = createStorage();
 
@@ -70,13 +70,13 @@ const storage$1 = createStorage({});
 
 storage$1.mount('/assets', assets);
 
-storage$1.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"E:/FinHack/frontend","watchOptions":{"ignored":[null]}}));
-storage$1.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"E:/FinHack/frontend/server","watchOptions":{"ignored":[null]}}));
-storage$1.mount('content:source:content', unstorage_47drivers_47fs({"name":"content:source:content","driver":"fs","base":"E:/FinHack/frontend/content"}));
-storage$1.mount('cache:content', unstorage_47drivers_47fs({"driver":"fs","base":"E:/FinHack/frontend/.nuxt/content-cache"}));
-storage$1.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"E:/FinHack/frontend/.nuxt"}));
-storage$1.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"E:/FinHack/frontend/.nuxt/cache"}));
-storage$1.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"E:/FinHack/frontend/.data/kv"}));
+storage$1.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"E:/FinCrack/frontend","watchOptions":{"ignored":[null]}}));
+storage$1.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"E:/FinCrack/frontend/server","watchOptions":{"ignored":[null]}}));
+storage$1.mount('content:source:content', unstorage_47drivers_47fs({"name":"content:source:content","driver":"fs","base":"E:/FinCrack/frontend/content"}));
+storage$1.mount('cache:content', unstorage_47drivers_47fs({"driver":"fs","base":"E:/FinCrack/frontend/.nuxt/content-cache"}));
+storage$1.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"E:/FinCrack/frontend/.nuxt"}));
+storage$1.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"E:/FinCrack/frontend/.nuxt/cache"}));
+storage$1.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"E:/FinCrack/frontend/.data/kv"}));
 
 function useStorage(base = "") {
   return base ? prefixStorage(storage$1, base) : storage$1;
@@ -674,6 +674,7 @@ const _inlineRuntimeConfig = {
   "public": {
     "alphaVantageApiKey": "",
     "finnhubApiKey": "cvsttqhr01qhup0t27agcvsttqhr01qhup0t27b0",
+    "apiBaseUrl": "http://localhost:3000/api",
     "mdc": {
       "components": {
         "prose": true,
@@ -860,7 +861,7 @@ const _inlineRuntimeConfig = {
     "alias": {},
     "fs": {
       "dir": [
-        "E:/FinHack/frontend/public"
+        "E:/FinCrack/frontend/public"
       ]
     },
     "http": {
@@ -1226,13 +1227,13 @@ if (!window.__NUXT_DEVTOOLS_TIME_METRIC__) {
 window.__NUXT_DEVTOOLS_TIME_METRIC__.appInit = Date.now()
 `;
 
-const _GOsHrjmvck_pKmcPI41TwsrD4xAuZkTmSOrhyOxRmbc = (function(nitro) {
+const _BYv2cCSsuf9s1mcIuNvFsgS6knottejSkeH6zoUiAQA = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script$1}<\/script>`);
   });
 });
 
-const rootDir = "E:/FinHack/frontend";
+const rootDir = "E:/FinCrack/frontend";
 
 const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Advanced financial management platform for modern investors and traders"}],"link":[{"rel":"icon","type":"image/x-icon","href":"/favicon.ico"},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Gugi&display=swap"},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Varela+Round&display=swap"}],"style":[],"script":[],"noscript":[],"title":"FinHack - Modern Financial Solutions"};
 
@@ -1251,7 +1252,7 @@ const devReducers = {
   URL: (data) => data instanceof URL ? data.toString() : void 0
 };
 const asyncContext = getContext("nuxt-dev", { asyncContext: true, AsyncLocalStorage });
-const _Dwsk1JfUPtj3_h96Dp9lagcs9U9YRODcxINoJ_s7D2E = (nitroApp) => {
+const _2ikfaAjnISZzqAUC7rTdSl5N6fhKq3NxQhjNZbX8 = (nitroApp) => {
   const handler = nitroApp.h3App.handler;
   nitroApp.h3App.handler = (event) => {
     return asyncContext.callAsync({ logs: [], event }, () => handler(event));
@@ -2155,7 +2156,7 @@ function contentHeading(body) {
   };
 }
 
-const _EYwgit61oLjn1MjEi4hxXd3CocR57mnvAtUkkeNm98 = defineNitroPlugin(async (nitro) => {
+const _tdl1irlWUnBbLsUclX9ef8P0J2bowuz2Jo7huqLo1_A = defineNitroPlugin(async (nitro) => {
   const { cleanCachedContents } = await Promise.resolve().then(function () { return storage; });
   const storage$1 = useStorage();
   const unwatch = await storage$1.watch(async (event, key) => {
@@ -2172,20 +2173,20 @@ const _EYwgit61oLjn1MjEi4hxXd3CocR57mnvAtUkkeNm98 = defineNitroPlugin(async (nit
 
 const script = "\"use strict\";(()=>{const t=window,e=document.documentElement,c=[\"dark\",\"light\"],n=getStorageValue(\"localStorage\",\"nuxt-color-mode\")||\"dark\";let i=n===\"system\"?u():n;const r=e.getAttribute(\"data-color-mode-forced\");r&&(i=r),l(i),t[\"__NUXT_COLOR_MODE__\"]={preference:n,value:i,getColorScheme:u,addColorScheme:l,removeColorScheme:d};function l(o){const s=\"\"+o+\"\",a=\"\";e.classList?e.classList.add(s):e.className+=\" \"+s,a&&e.setAttribute(\"data-\"+a,o)}function d(o){const s=\"\"+o+\"\",a=\"\";e.classList?e.classList.remove(s):e.className=e.className.replace(new RegExp(s,\"g\"),\"\"),a&&e.removeAttribute(\"data-\"+a)}function f(o){return t.matchMedia(\"(prefers-color-scheme\"+o+\")\")}function u(){if(t.matchMedia&&f(\"\").media!==\"not all\"){for(const o of c)if(f(\":\"+o).matches)return o}return\"dark\"}})();function getStorageValue(t,e){switch(t){case\"localStorage\":return window.localStorage.getItem(e);case\"sessionStorage\":return window.sessionStorage.getItem(e);case\"cookie\":return getCookie(e);default:return null}}function getCookie(t){const c=(\"; \"+window.document.cookie).split(\"; \"+t+\"=\");if(c.length===2)return c.pop()?.split(\";\").shift()}";
 
-const _EuP_QqjUgMOMwpBfIsBzqw_axDIjQZIpQ9lSIMSl1U = (function(nitro) {
+const _bzePB2eSRRGaJtw6mkNc7btLhUN2t_JOloQBHP6Fr0 = (function(nitro) {
   nitro.hooks.hook("render:html", (htmlContext) => {
     htmlContext.head.push(`<script>${script}<\/script>`);
   });
 });
 
 const plugins = [
-  _GOsHrjmvck_pKmcPI41TwsrD4xAuZkTmSOrhyOxRmbc,
-_Dwsk1JfUPtj3_h96Dp9lagcs9U9YRODcxINoJ_s7D2E,
-_EYwgit61oLjn1MjEi4hxXd3CocR57mnvAtUkkeNm98,
-_EuP_QqjUgMOMwpBfIsBzqw_axDIjQZIpQ9lSIMSl1U
+  _BYv2cCSsuf9s1mcIuNvFsgS6knottejSkeH6zoUiAQA,
+_2ikfaAjnISZzqAUC7rTdSl5N6fhKq3NxQhjNZbX8,
+_tdl1irlWUnBbLsUclX9ef8P0J2bowuz2Jo7huqLo1_A,
+_bzePB2eSRRGaJtw6mkNc7btLhUN2t_JOloQBHP6Fr0
 ];
 
-const _TDYM21 = defineEventHandler(async (event) => {
+const _1NfTjG = defineEventHandler(async (event) => {
   const { getContentQuery } = await Promise.resolve().then(function () { return query; });
   const { serverQueryContent } = await Promise.resolve().then(function () { return storage; });
   const query$1 = getContentQuery(event);
@@ -2216,7 +2217,7 @@ const _TDYM21 = defineEventHandler(async (event) => {
   return serverQueryContent(event, query$1).find();
 });
 
-const _C6dN83 = defineEventHandler(async (event) => {
+const _nPJIjj = defineEventHandler(async (event) => {
   const { getContentIndex } = await Promise.resolve().then(function () { return contentIndex; });
   const { cacheStorage, serverQueryContent } = await Promise.resolve().then(function () { return storage; });
   const { content } = useRuntimeConfig();
@@ -2242,7 +2243,7 @@ const getPreview = (event) => {
   return { key };
 };
 
-const _P5Y7vM = defineEventHandler(async (event) => {
+const _Kj4cTH = defineEventHandler(async (event) => {
   const { getContentQuery } = await Promise.resolve().then(function () { return query; });
   const { cacheStorage, serverQueryContent } = await Promise.resolve().then(function () { return storage; });
   const { createNav } = await Promise.resolve().then(function () { return navigation; });
@@ -2283,7 +2284,7 @@ const _P5Y7vM = defineEventHandler(async (event) => {
   return createNav(contents?.result || contents, configs);
 });
 
-const _kDwBGD = lazyEventHandler(() => {
+const _ZCGYVI = lazyEventHandler(() => {
   const opts = useRuntimeConfig().ipx || {};
   const fsDir = opts?.fs?.dir ? (Array.isArray(opts.fs.dir) ? opts.fs.dir : [opts.fs.dir]).map((dir) => isAbsolute(dir) ? dir : fileURLToPath(new URL(dir, globalThis._importMeta_.url))) : void 0;
   const fsStorage = opts.fs?.dir ? ipxFSStorage({ ...opts.fs, dir: fsDir }) : void 0;
@@ -2301,33 +2302,33 @@ const _kDwBGD = lazyEventHandler(() => {
   return useBase(opts.baseURL, ipxHandler);
 });
 
-const _lazy_F7lo23 = () => Promise.resolve().then(function () { return bankRecommendations$1; });
-const _lazy_ic7PvD = () => Promise.resolve().then(function () { return companyNews$1; });
-const _lazy_EfUdAV = () => Promise.resolve().then(function () { return companyProfile$1; });
-const _lazy_VizFPY = () => Promise.resolve().then(function () { return companySearch$1; });
-const _lazy_kmppww = () => Promise.resolve().then(function () { return financialMetrics$1; });
-const _lazy_4tgU9n = () => Promise.resolve().then(function () { return finnhubNews$1; });
-const _lazy_AF_51V = () => Promise.resolve().then(function () { return stockNews$1; });
-const _lazy_vfJn2N = () => Promise.resolve().then(function () { return renderer$1; });
+const _lazy_1fFOQl = () => Promise.resolve().then(function () { return bankRecommendations$1; });
+const _lazy_rdtLaG = () => Promise.resolve().then(function () { return companyNews$1; });
+const _lazy_t2gEbW = () => Promise.resolve().then(function () { return companyProfile$1; });
+const _lazy_ttYFQt = () => Promise.resolve().then(function () { return companySearch$1; });
+const _lazy_CjN5b4 = () => Promise.resolve().then(function () { return financialMetrics$1; });
+const _lazy_Ezj96u = () => Promise.resolve().then(function () { return finnhubNews$1; });
+const _lazy_Kyt3td = () => Promise.resolve().then(function () { return stockNews$1; });
+const _lazy_bcJZz9 = () => Promise.resolve().then(function () { return renderer$1; });
 
 const handlers = [
-  { route: '/api/bank-recommendations', handler: _lazy_F7lo23, lazy: true, middleware: false, method: undefined },
-  { route: '/api/company-news', handler: _lazy_ic7PvD, lazy: true, middleware: false, method: undefined },
-  { route: '/api/company-profile', handler: _lazy_EfUdAV, lazy: true, middleware: false, method: undefined },
-  { route: '/api/company-search', handler: _lazy_VizFPY, lazy: true, middleware: false, method: undefined },
-  { route: '/api/financial-metrics', handler: _lazy_kmppww, lazy: true, middleware: false, method: undefined },
-  { route: '/api/finnhub-news', handler: _lazy_4tgU9n, lazy: true, middleware: false, method: undefined },
-  { route: '/api/stock-news', handler: _lazy_AF_51V, lazy: true, middleware: false, method: undefined },
-  { route: '/__nuxt_error', handler: _lazy_vfJn2N, lazy: true, middleware: false, method: undefined },
-  { route: '/api/_content/query/:qid/**:params', handler: _TDYM21, lazy: false, middleware: false, method: "get" },
-  { route: '/api/_content/query/:qid', handler: _TDYM21, lazy: false, middleware: false, method: "get" },
-  { route: '/api/_content/query', handler: _TDYM21, lazy: false, middleware: false, method: "get" },
-  { route: '/api/_content/cache.json', handler: _C6dN83, lazy: false, middleware: false, method: "get" },
-  { route: '/api/_content/navigation/:qid/**:params', handler: _P5Y7vM, lazy: false, middleware: false, method: "get" },
-  { route: '/api/_content/navigation/:qid', handler: _P5Y7vM, lazy: false, middleware: false, method: "get" },
-  { route: '/api/_content/navigation', handler: _P5Y7vM, lazy: false, middleware: false, method: "get" },
-  { route: '/_ipx/**', handler: _kDwBGD, lazy: false, middleware: false, method: undefined },
-  { route: '/**', handler: _lazy_vfJn2N, lazy: true, middleware: false, method: undefined }
+  { route: '/api/bank-recommendations', handler: _lazy_1fFOQl, lazy: true, middleware: false, method: undefined },
+  { route: '/api/company-news', handler: _lazy_rdtLaG, lazy: true, middleware: false, method: undefined },
+  { route: '/api/company-profile', handler: _lazy_t2gEbW, lazy: true, middleware: false, method: undefined },
+  { route: '/api/company-search', handler: _lazy_ttYFQt, lazy: true, middleware: false, method: undefined },
+  { route: '/api/financial-metrics', handler: _lazy_CjN5b4, lazy: true, middleware: false, method: undefined },
+  { route: '/api/finnhub-news', handler: _lazy_Ezj96u, lazy: true, middleware: false, method: undefined },
+  { route: '/api/stock-news', handler: _lazy_Kyt3td, lazy: true, middleware: false, method: undefined },
+  { route: '/__nuxt_error', handler: _lazy_bcJZz9, lazy: true, middleware: false, method: undefined },
+  { route: '/api/_content/query/:qid/**:params', handler: _1NfTjG, lazy: false, middleware: false, method: "get" },
+  { route: '/api/_content/query/:qid', handler: _1NfTjG, lazy: false, middleware: false, method: "get" },
+  { route: '/api/_content/query', handler: _1NfTjG, lazy: false, middleware: false, method: "get" },
+  { route: '/api/_content/cache.json', handler: _nPJIjj, lazy: false, middleware: false, method: "get" },
+  { route: '/api/_content/navigation/:qid/**:params', handler: _Kj4cTH, lazy: false, middleware: false, method: "get" },
+  { route: '/api/_content/navigation/:qid', handler: _Kj4cTH, lazy: false, middleware: false, method: "get" },
+  { route: '/api/_content/navigation', handler: _Kj4cTH, lazy: false, middleware: false, method: "get" },
+  { route: '/_ipx/**', handler: _ZCGYVI, lazy: false, middleware: false, method: undefined },
+  { route: '/**', handler: _lazy_bcJZz9, lazy: true, middleware: false, method: undefined }
 ];
 
 function createNitroApp() {
@@ -3581,7 +3582,7 @@ const json = defineTransformer({
     let parsed;
     if (typeof content === "string") {
       if (_id.endsWith("json5")) {
-        parsed = (await import('file://E:/FinHack/frontend/node_modules/json5/lib/index.js').then((m) => m.default || m)).parse(content);
+        parsed = (await import('file://E:/FinCrack/frontend/node_modules/json5/lib/index.js').then((m) => m.default || m)).parse(content);
       } else if (_id.endsWith("json")) {
         parsed = destr$1(content);
       }
@@ -4949,8 +4950,8 @@ function resolveUnrefHeadInput(input) {
 
 const APP_ROOT_OPEN_TAG = `<${appRootTag}${propsToString(appRootAttrs)}>`;
 const APP_ROOT_CLOSE_TAG = `</${appRootTag}>`;
-const getClientManifest = () => import('file://E:/FinHack/frontend/.nuxt/dist/server/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
-const getServerEntry = () => import('file://E:/FinHack/frontend/.nuxt/dist/server/server.mjs').then((r) => r.default || r);
+const getClientManifest = () => import('file://E:/FinCrack/frontend/.nuxt/dist/server/client.manifest.mjs').then((r) => r.default || r).then((r) => typeof r === "function" ? r() : r);
+const getServerEntry = () => import('file://E:/FinCrack/frontend/.nuxt/dist/server/server.mjs').then((r) => r.default || r);
 const getSSRStyles = lazyCachedFunction(() => Promise.resolve().then(function () { return styles$1; }).then((r) => r.default || r));
 const getSSRRenderer = lazyCachedFunction(async () => {
   const manifest = await getClientManifest();

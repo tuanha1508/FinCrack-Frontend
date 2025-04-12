@@ -346,6 +346,8 @@ declare module 'nuxt/schema' {
 
    finnhubApiKey: string,
 
+   apiBaseUrl: string,
+
    mdc: {
       components: {
          prose: boolean,

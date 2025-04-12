@@ -12,13 +12,13 @@
                      class="px-8 h-8 font-medium rounded-full transition-colors flex items-center justify-center">
           Try here
         </router-link>
-        <router-link to="/about" class="group px-6 h-8 font-medium flex items-center relative"
+        <router-link to="/about" class="group px-6 h-8 font-medium flex items-center"
                       :class="isDark ? 'text-white' : 'text-black'">
-          <span class="relative">
+          <div class="relative inline-block">
             See what we have now
-            <span class="absolute h-0.5 w-0 left-1/2 -translate-x-1/2 bottom-0 group-hover:w-full transition-all duration-300 rounded-full"
+            <span class="absolute h-0.5 w-0 left-1/2 -translate-x-1/2 bottom-0 group-hover:w-full transition-all duration-300 ease-in-out rounded-full"
                   :class="isDark ? 'bg-white' : 'bg-black'"></span>
-          </span>
+          </div>
           <span class="ml-2">→</span>
         </router-link>
       </div>
