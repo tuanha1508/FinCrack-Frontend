@@ -42,10 +42,33 @@
               class="w-5 h-5" 
             />
           </button>
+          
           <div class="relative">
-            <button class="h-8 w-8 rounded-full bg-accent text-foreground flex items-center justify-center">
-              <span class="text-xs font-medium">US</span>
+            <button 
+              @click="userMenuOpen = !userMenuOpen" 
+              class="h-8 w-8 rounded-full bg-accent text-foreground flex items-center justify-center"
+            >
+              <span class="text-xs font-medium">{{ userInitials }}</span>
             </button>
+            
+            <!-- User menu dropdown -->
+            <div 
+              v-if="userMenuOpen" 
+              class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-card border"
+              @click.outside="userMenuOpen = false"
+            >
+              <div class="px-4 py-2 border-b">
+                <div class="text-sm font-medium text-foreground">{{ user?.name }}</div>
+                <div class="text-xs text-muted-foreground">{{ user?.email }}</div>
+              </div>
+              <button 
+                @click="handleLogout" 
+                class="w-full px-4 py-2 text-sm text-left hover:bg-accent flex items-center gap-2 text-foreground"
+              >
+                <Icon name="lucide:log-out" class="w-4 h-4" />
+                <span>Logout</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -59,25 +82,61 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useTheme } from '@/composables/useTheme'
+import { ref, computed, onMounted } from 'vue';
+import { definePageMeta, navigateTo } from '#imports';
+import { useTheme } from '@/composables/useTheme';
+import { useAuth } from '@/composables/useAuth';
 
-const { mode: colorMode, toggleDarkMode } = useTheme()
-const sidebarExpanded = ref(true)
+// Define page meta for auth protection
+definePageMeta({
+  middleware: ['auth']
+});
 
+// Theme and sidebar state
+const { mode: colorMode, toggleDarkMode } = useTheme();
+const sidebarExpanded = ref(true);
+const userMenuOpen = ref(false);
+
+// Auth state
+const { user, isAuthenticated, logout } = useAuth();
+
+// Computed properties
+const userInitials = computed(() => {
+  if (!user.value?.name) return 'U';
+  
+  // Get initials from name
+  const nameParts = user.value.name.split(' ');
+  if (nameParts.length >= 2) {
+    return `${nameParts[0].charAt(0)}${nameParts[1].charAt(0)}`.toUpperCase();
+  }
+  return nameParts[0].charAt(0).toUpperCase();
+});
+
+// Methods
 const toggleSidebar = () => {
-  sidebarExpanded.value = !sidebarExpanded.value
-}
+  sidebarExpanded.value = !sidebarExpanded.value;
+};
 
 const toggleColorMode = () => {
-  toggleDarkMode()
-}
+  toggleDarkMode();
+};
 
 const expandSidebar = () => {
-  sidebarExpanded.value = true
-}
+  sidebarExpanded.value = true;
+};
 
 const collapseSidebar = () => {
-  sidebarExpanded.value = false
-}
+  sidebarExpanded.value = false;
+};
+
+const handleLogout = async () => {
+  await logout();
+};
+
+// Check auth on mount
+onMounted(() => {
+  if (!isAuthenticated.value) {
+    navigateTo('/sign-in');
+  }
+});
 </script> 

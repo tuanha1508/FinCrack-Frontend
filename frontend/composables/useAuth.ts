@@ -1,5 +1,6 @@
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
+import { ref, watchEffect } from 'vue';
+import { useRouter, useLocalStorage, useRuntimeConfig } from '#imports';
+import { useAuthService } from '@/services/auth';
 
 export interface LoginCredentials {
   email: string;
@@ -17,192 +18,198 @@ export interface User {
   name: string;
 }
 
+// Auth store state
+const TOKEN_KEY = 'auth_token';
+const USER_KEY = 'auth_user';
+
+// Global auth state
+const isAuthenticated = ref(false);
+const isLoading = ref(false);
+const error = ref('');
+const user = ref<User | null>(null);
+const token = ref<string | null>(null);
+
 export function useAuth() {
   const router = useRouter();
-  const isAuthenticated = ref(false);
-  const isLoading = ref(false);
-  const error = ref('');
-  const user = ref<User | null>(null);
-
-  // Mock auth functions - replace with real API calls
+  const authService = useAuthService();
+  
+  // Initialize auth state from local storage
+  const initAuth = () => {
+    // Skip on server
+    if (process.server) return;
+    
+    // Load auth state from local storage
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedUser = localStorage.getItem(USER_KEY);
+    
+    if (storedToken && storedUser) {
+      token.value = storedToken;
+      user.value = JSON.parse(storedUser);
+      isAuthenticated.value = true;
+    }
+  };
+  
+  // Call initAuth on client side
+  if (process.client) {
+    initAuth();
+  }
+  
+  // Persist auth state to local storage
+  const saveAuthState = () => {
+    if (token.value && user.value) {
+      localStorage.setItem(TOKEN_KEY, token.value);
+      localStorage.setItem(USER_KEY, JSON.stringify(user.value));
+    } else {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+    }
+  };
+  
+  // Watch auth state changes and persist to local storage
+  watchEffect(() => {
+    if (process.client) {
+      saveAuthState();
+    }
+  });
+  
+  // Login with email and password
   const login = async (credentials: LoginCredentials) => {
     isLoading.value = true;
     error.value = '';
     
     try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const response = await authService.login(credentials);
       
-      // Simulate successful login
-      isAuthenticated.value = true;
-      user.value = {
-        email: credentials.email,
-        name: 'User Name' // This would come from the API
-      };
+      if (response.error) {
+        error.value = response.error;
+        return;
+      }
       
-      // Navigate to home page
-      router.push('/');
-    } catch (err) {
-      error.value = 'Invalid email or password';
+      if (response.data) {
+        token.value = response.data.token;
+        user.value = response.data.user;
+        isAuthenticated.value = true;
+        
+        // Navigate to home page
+        router.push('/');
+      }
+    } catch (err: any) {
+      error.value = err.message || 'Login failed';
     } finally {
       isLoading.value = false;
     }
   };
 
+  // Register a new user
   const signup = async (credentials: SignupCredentials) => {
     isLoading.value = true;
     error.value = '';
     
     try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const response = await authService.register(credentials);
       
-      // Simulate successful signup
-      isAuthenticated.value = false;
-      user.value = null;
+      if (response.error) {
+        error.value = response.error;
+        return;
+      }
       
-      // Navigate to sign-in page instead of home page
+      // Navigate to sign-in page after successful registration
       router.push('/sign-in');
-    } catch (err) {
-      error.value = 'Error creating account';
+    } catch (err: any) {
+      error.value = err.message || 'Registration failed';
     } finally {
       isLoading.value = false;
     }
   };
-
-  const loginWithGoogle = async (isSignUp = false) => {
+  
+  // Handle OAuth authentication
+  const handleOAuthLogin = async (provider: string, code?: string) => {
+    if (!code) return;
+    
     isLoading.value = true;
     error.value = '';
     
     try {
-      // Mock API call for OAuth
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const response = await authService.oauthLogin(provider, code);
       
-      if (isSignUp) {
-        // If used for sign-up, redirect to sign-in
-        router.push('/sign-in');
-      } else {
-        // Normal login flow
+      if (response.error) {
+        error.value = response.error;
+        return;
+      }
+      
+      if (response.data) {
+        token.value = response.data.token;
+        user.value = response.data.user;
         isAuthenticated.value = true;
-        user.value = {
-          email: 'user@gmail.com', 
-          name: 'Google User'
-        };
         
+        // Navigate to home page
         router.push('/');
       }
-    } catch (err) {
-      error.value = 'Google login failed';
+    } catch (err: any) {
+      error.value = err.message || `${provider} login failed`;
     } finally {
       isLoading.value = false;
     }
   };
-
-  const loginWithGithub = async (isSignUp = false) => {
-    isLoading.value = true;
-    error.value = '';
-    
-    try {
-      // Mock API call for OAuth
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      if (isSignUp) {
-        // If used for sign-up, redirect to sign-in
-        router.push('/sign-in');
-      } else {
-        // Normal login flow
-        isAuthenticated.value = true;
-        user.value = {
-          email: 'user@github.com', 
-          name: 'Github User'
-        };
-        
-        router.push('/');
-      }
-    } catch (err) {
-      error.value = 'Github login failed';
-    } finally {
-      isLoading.value = false;
-    }
+  
+  // OAuth login methods (redirects to provider authorization page)
+  const loginWithGoogle = async () => {
+    // Here we would redirect to backend OAuth endpoint
+    // For now we'll use a mock implementation
+    window.location.href = `${useRuntimeConfig().public.apiBaseUrl}/auth/oauth/google`;
+  };
+  
+  const loginWithGithub = async () => {
+    window.location.href = `${useRuntimeConfig().public.apiBaseUrl}/auth/oauth/github`;
+  };
+  
+  const loginWithFacebook = async () => {
+    window.location.href = `${useRuntimeConfig().public.apiBaseUrl}/auth/oauth/facebook`;
+  };
+  
+  const loginWithTwitter = async () => {
+    window.location.href = `${useRuntimeConfig().public.apiBaseUrl}/auth/oauth/twitter`;
   };
 
-  const loginWithFacebook = async (isSignUp = false) => {
-    isLoading.value = true;
-    error.value = '';
-    
-    try {
-      // Mock API call for OAuth
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      if (isSignUp) {
-        // If used for sign-up, redirect to sign-in
-        router.push('/sign-in');
-      } else {
-        // Normal login flow
-        isAuthenticated.value = true;
-        user.value = {
-          email: 'user@facebook.com', 
-          name: 'Facebook User'
-        };
-        
-        router.push('/');
-      }
-    } catch (err) {
-      error.value = 'Facebook login failed';
-    } finally {
-      isLoading.value = false;
-    }
-  };
-
-  const loginWithTwitter = async (isSignUp = false) => {
-    isLoading.value = true;
-    error.value = '';
-    
-    try {
-      // Mock API call for OAuth
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      if (isSignUp) {
-        // If used for sign-up, redirect to sign-in
-        router.push('/sign-in');
-      } else {
-        // Normal login flow
-        isAuthenticated.value = true;
-        user.value = {
-          email: 'user@twitter.com', 
-          name: 'Twitter User'
-        };
-        
-        router.push('/');
-      }
-    } catch (err) {
-      error.value = 'Twitter login failed';
-    } finally {
-      isLoading.value = false;
-    }
-  };
-
+  // Logout
   const logout = async () => {
-    // Mock logout
-    await new Promise(resolve => setTimeout(resolve, 300));
+    isLoading.value = true;
     
-    isAuthenticated.value = false;
-    user.value = null;
-    router.push('/sign-in');
+    try {
+      // Call logout endpoint if authenticated
+      if (isAuthenticated.value) {
+        await authService.logout();
+      }
+    } catch (err) {
+      // Ignore errors on logout
+    } finally {
+      // Clear auth state regardless of API response
+      token.value = null;
+      user.value = null;
+      isAuthenticated.value = false;
+      isLoading.value = false;
+      
+      // Navigate to login page
+      router.push('/sign-in');
+    }
   };
 
+  // Reset password
   const resetPassword = async (email: string) => {
     isLoading.value = true;
     error.value = '';
     
     try {
-      // Mock API call
-      await new Promise(resolve => setTimeout(resolve, 800));
+      const response = await authService.requestPasswordReset(email);
       
-      // Return success
+      if (response.error) {
+        error.value = response.error;
+        return false;
+      }
+      
       return true;
-    } catch (err) {
-      error.value = 'Error resetting password';
+    } catch (err: any) {
+      error.value = err.message || 'Password reset failed';
       return false;
     } finally {
       isLoading.value = false;
@@ -214,6 +221,7 @@ export function useAuth() {
     isLoading,
     error,
     user,
+    token,
     login,
     signup,
     loginWithGoogle,
@@ -221,6 +229,7 @@ export function useAuth() {
     loginWithFacebook,
     loginWithTwitter,
     logout,
-    resetPassword
+    resetPassword,
+    initAuth
   };
 } 

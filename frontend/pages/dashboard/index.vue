@@ -30,7 +30,9 @@ import CompanyFinancialOverviewHardcoded from '@/components/dashboard/CompanyFin
 
 // Set the dashboard layout
 definePageMeta({
-  layout: 'dashboard'
+  layout: 'dashboard',
+  middleware: ['auth'],
+  requiresAuth: true,
 })
 
 interface Company {

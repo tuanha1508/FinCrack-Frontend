@@ -10,11 +10,12 @@ export default defineNuxtConfig({
     public: {
       // Public config here
       alphaVantageApiKey: process.env.NUXT_ALPHA_VANTAGE_API_KEY || '', // Expose Alpha Vantage API key to client
-      finnhubApiKey: process.env.NUXT_FINNHUB_API_KEY || 'cvsttqhr01qhup0t27agcvsttqhr01qhup0t27b0', // Expose Finnhub API key to client
+      finnhubApiKey: process.env.NUXT_FINNHUB_API_KEY || '', // Expose Finnhub API key to client
+      apiBaseUrl: process.env.NUXT_API_BASE_URL || 'http://localhost:3000/api', // Backend API base URL
     },
     // Private keys only available on the server
     alphaVantageApiKey: process.env.NUXT_ALPHA_VANTAGE_API_KEY || '', // Alpha Vantage API key
-    finnhubApiKey: process.env.NUXT_FINNHUB_API_KEY || 'cvsttqhr01qhup0t27agcvsttqhr01qhup0t27b0', // Finnhub API key
+    finnhubApiKey: process.env.NUXT_FINNHUB_API_KEY || '', // Finnhub API key
   },
 
   modules: [
