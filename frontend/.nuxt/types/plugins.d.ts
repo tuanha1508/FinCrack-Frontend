@@ -25,6 +25,7 @@ type NuxtAppInjections =
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/dev-server-logs.js")> &
   InjectionType<typeof import("../../node_modules/nuxt/dist/app/plugins/check-if-layout-used.js")> &
   InjectionType<typeof import("../../plugins/auth")> &
+  InjectionType<typeof import("../../plugins/manifest-route-rule")> &
   InjectionType<typeof import("../../plugins/primevue")> &
   InjectionType<typeof import("../../plugins/ui-components")>
 

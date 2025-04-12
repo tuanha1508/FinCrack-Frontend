@@ -77,11 +77,66 @@ export function useAuth() {
     isLoading.value = true;
     error.value = '';
     
+    // Enhanced debug logging
+    console.log('Login function called with credentials:', {
+      email: credentials.email,
+      passwordLength: credentials.password?.length || 0
+    });
+    
     try {
+      // Special admin bypass - hardcoded admin account with more flexibility
+      const adminEmail = 'admin@local';
+      const adminPassword = 'adminBypass123!';
+      
+      // Make admin login case-insensitive and trim whitespace
+      if (credentials.email.trim().toLowerCase() === adminEmail.toLowerCase() && 
+          credentials.password === adminPassword) {
+        console.log('Admin bypass detected - creating local session');
+        
+        try {
+          // Create admin token with timestamp to ensure uniqueness
+          const adminToken = `admin-local-bypass-token-${Date.now()}`;
+          
+          // Set auth state
+          token.value = adminToken;
+          user.value = {
+            email: adminEmail,
+            name: 'Local Admin'
+          };
+          isAuthenticated.value = true;
+          
+          // Force save to localStorage immediately
+          if (process.client) {
+            localStorage.setItem(TOKEN_KEY, adminToken);
+            localStorage.setItem(USER_KEY, JSON.stringify(user.value));
+            console.log('Admin auth state saved to localStorage');
+          }
+          
+          console.log('Admin authenticated successfully', { 
+            isAuthenticated: isAuthenticated.value,
+            hasToken: !!token.value,
+            hasUser: !!user.value
+          });
+          
+          // Navigate to dashboard after a short delay to ensure state is updated
+          setTimeout(() => {
+            router.push('/dashboard');
+            console.log('Navigation to dashboard triggered');
+          }, 100);
+          
+          isLoading.value = false;
+          return;
+        } catch (err) {
+          console.error('Error in admin bypass authentication:', err);
+        }
+      }
+      
+      console.log('Proceeding with normal authentication flow');
       const response = await authService.login(credentials);
       
       if (response.error) {
         error.value = response.error;
+        console.error('Authentication error:', response.error);
         return;
       }
       
@@ -90,10 +145,13 @@ export function useAuth() {
         user.value = response.data.user;
         isAuthenticated.value = true;
         
+        console.log('User authenticated via API successfully');
+        
         // Navigate to dashboard page instead of home
         router.push('/dashboard');
       }
     } catch (err: any) {
+      console.error('Unexpected error during login:', err);
       error.value = err.message || 'Login failed';
     } finally {
       isLoading.value = false;

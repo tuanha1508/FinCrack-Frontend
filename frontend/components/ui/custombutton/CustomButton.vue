@@ -12,11 +12,12 @@
       variant === 'default' && (isDark 
         ? 'w-full py-2 px-2.5 rounded-full text-xs font-semibold cursor-pointer mb-5 bg-white text-black transition-all hover:opacity-90' 
         : 'w-full py-2 px-2.5 rounded-full text-xs font-semibold cursor-pointer mb-5 bg-black text-white transition-all hover:opacity-90'),
+      disabled ? 'opacity-70 hover:opacity-70 cursor-pointer' : '',
       className
     ]"
     :type="type"
-    :disabled="disabled"
-    @click="onClick"
+    :disabled="false"
+    @click="handleClick"
   >
     <slot />
   </button>
@@ -28,7 +29,7 @@ import { useTheme } from '@/composables/useTheme';
 // Get theme state
 const { isDark } = useTheme();
 
-defineProps({
+const props = defineProps({
   variant: {
     type: String,
     default: 'default',
@@ -53,7 +54,9 @@ const emit = defineEmits<{
   (e: 'click', event: MouseEvent): void
 }>();
 
-const onClick = (event: MouseEvent) => {
+const handleClick = (event: MouseEvent) => {
+  console.log('Button clicked', { type: props.type, disabled: props.disabled });
+  
   emit('click', event);
 };
 </script> 

@@ -18,6 +18,11 @@ export default defineNuxtConfig({
     finnhubApiKey: process.env.NUXT_FINNHUB_API_KEY || '', // Finnhub API key
   },
 
+  routeRules: {
+    // Fix manifest-route-rule middleware conflict by setting override to true
+    '/**': { middlewareOptions: { 'manifest-route-rule': { override: true } } }
+  },
+
   modules: [
     '@pinia/nuxt',
     '@nuxt/content',

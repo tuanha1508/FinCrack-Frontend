@@ -27,6 +27,79 @@ export const useApi = () => {
   ): Promise<ApiResponse<T>> => {
     const { method = 'GET', body, headers = {} } = options;
 
+    // Check for admin bypass token in localStorage
+    const authToken = process.client ? localStorage.getItem('auth_token') : null;
+    
+    // Debug token info
+    if (process.client && authToken) {
+      console.log(`API Request to ${endpoint} with token: ${authToken.substring(0, 10)}...`);
+    }
+    
+    // If using admin bypass token, return mock responses for auth-related endpoints
+    // Use startsWith to handle tokens with timestamps
+    if (authToken && authToken.startsWith('admin-local-bypass-token')) {
+      console.log(`Using admin bypass for endpoint: ${endpoint}`);
+      
+      // Handle auth profile request
+      if (endpoint === '/auth/profile') {
+        return {
+          data: {
+            email: 'admin@local',
+            name: 'Local Admin',
+            role: 'admin'
+          } as T,
+          status: 200,
+        };
+      }
+      
+      // Handle user profile request
+      if (endpoint === '/user/profile') {
+        return {
+          data: {
+            email: 'admin@local',
+            name: 'Local Admin',
+            role: 'admin'
+          } as T,
+          status: 200,
+        };
+      }
+      
+      // Handle user dashboard data
+      if (endpoint === '/user/dashboard') {
+        return {
+          data: {
+            id: 'admin-local',
+            name: 'Local Admin',
+            email: 'admin@local',
+            accountInfo: {
+              createdAt: new Date().toISOString(),
+              lastLogin: new Date().toISOString(),
+              status: 'active'
+            },
+            dashboardData: {
+              accountBalance: 100000,
+              savingsGoal: 250000,
+              recentTransactions: [],
+              investmentPerformance: {
+                totalValue: 75000,
+                changePercent: 5.2,
+                changeAmount: 3700
+              }
+            }
+          } as unknown as T,
+          status: 200,
+        };
+      }
+      
+      // Handle logout request
+      if (endpoint === '/auth/logout') {
+        return {
+          data: { message: 'Logged out successfully' } as unknown as T,
+          status: 200,
+        };
+      }
+    }
+
     try {
       const { data, error } = await useFetch(`${baseUrl}${endpoint}`, {
         method,

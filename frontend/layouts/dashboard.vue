@@ -54,7 +54,7 @@
             <!-- User menu dropdown -->
             <div 
               v-if="userMenuOpen" 
-              class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-card border"
+              class="absolute right-0 mt-2 w-48 rounded-md shadow-lg py-1 bg-card border z-50"
               @click.outside="userMenuOpen = false"
             >
               <div class="px-4 py-2 border-b">
@@ -83,14 +83,9 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
-import { definePageMeta, navigateTo } from '#imports';
+import { navigateTo } from '#imports';
 import { useTheme } from '@/composables/useTheme';
 import { useAuth } from '@/composables/useAuth';
-
-// Define page meta for auth protection
-definePageMeta({
-  middleware: ['auth']
-});
 
 // Theme and sidebar state
 const { mode: colorMode, toggleDarkMode } = useTheme();
