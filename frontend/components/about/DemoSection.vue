@@ -115,19 +115,19 @@
               
               <!-- Message input area -->
               <div class="mt-6">
-                <div class="relative">
+                <div class="relative flex items-center">
                   <input
                     type="text"
                     placeholder="Type your message..."
-                    class="w-full p-4 pr-16 rounded-full text-sm focus:outline-none transition-all"
+                    class="w-full px-4 py-2 pr-16 rounded-full text-sm focus:outline-none transition-all"
                     :class="isDark ? 'bg-white/5 border border-white/10 text-white focus:border-white/30' : 'bg-black/5 border border-black/10 text-black focus:border-black/30'"
                     readonly
                   />
                   <button 
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 w-10 h-10 rounded-full flex items-center justify-center transition-all shadow-sm"
+                    class="absolute right-2 w-6 h-6 rounded-full flex items-center justify-center transition-all shadow-sm"
                     :class="isDark ? 'bg-white text-black hover:bg-white/90' : 'bg-black text-white hover:bg-black/90'"
                   >
-                    <Icon name="lucide:send" class="w-5 h-5" />
+                    <Icon name="lucide:send" class="w-3 h-3" />
                   </button>
                 </div>
               </div>

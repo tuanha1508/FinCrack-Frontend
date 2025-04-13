@@ -70,7 +70,7 @@
             </div>
             
             <!-- Chat input -->
-            <div class="relative">
+            <div class="relative flex items-center">
               <input
                 v-model="userInput"
                 @keyup.enter="sendMessage"
@@ -80,7 +80,7 @@
               />
               <button 
                 @click="sendMessage"
-                class="absolute right-3 top-1/2 transform -translate-y-1/2 w-8 h-8 rounded-full bg-primary text-primary-foreground ring-2 ring-primary/20 shadow-sm flex items-center justify-center"
+                class="absolute right-3 w-8 h-8 rounded-full bg-primary text-primary-foreground ring-2 ring-primary/20 shadow-sm flex items-center justify-center"
               >
                 <Icon name="lucide:send" class="h-4 w-4" />
               </button>
