@@ -66,33 +66,54 @@
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { computed, ref, watchEffect } from 'vue';
 
+// Define the expected boolean flags for customer types
+// Remove the incorrect expectation of a single `customerType: string`
 const props = defineProps<{
   formData: {
-    customerType: string;
+    globalCustomers: boolean;
+    professionals: boolean;
+    smes: boolean;
+    seniors: boolean;
+    students: boolean;
+    techSavvy: boolean;
+    // Allow other properties potentially present in formData
+    [key: string]: any; 
   };
 }>();
 
 const emit = defineEmits(['update:formData']);
 
-// Create a ref to track the selected radio value
-const selectedRadioValue = ref(props.formData.customerType || '');
+// Define the possible customer type keys
+const customerTypeKeys = ['globalCustomers', 'professionals', 'smes', 'seniors', 'students', 'techSavvy'] as const;
 
-// Update the radio value when formData changes
+// Ref to track the selected radio value (which corresponds to the key)
+const selectedRadioValue = ref('');
+
+// Update the selectedRadioValue based on which boolean flag is true
 const updateSelectedRadio = () => {
-  selectedRadioValue.value = props.formData.customerType || '';
+  const selectedKey = customerTypeKeys.find(key => props.formData[key]);
+  selectedRadioValue.value = selectedKey || '';
 };
 
-// Watch for changes in the formData
+// Watch for changes in the formData's boolean flags
 watchEffect(updateSelectedRadio);
 
-// Handle radio change events
+// Handle radio change: set the selected boolean flag to true and others to false
 const handleRadioChange = (value: string) => {
-  const updatedFormData = {
-    ...props.formData,
-    customerType: value
-  };
+  // Ensure the value is one of the known keys
+  if (!customerTypeKeys.includes(value as any)) return;
+
+  const updatedFormData = { ...props.formData };
   
-  // Emit the update event
+  // Set all customer type flags to false initially
+  customerTypeKeys.forEach(key => {
+    updatedFormData[key] = false;
+  });
+  
+  // Set the selected customer type flag to true
+  updatedFormData[value] = true;
+  
+  // Emit the update event with the modified formData
   emit('update:formData', updatedFormData);
 };
 </script> 
