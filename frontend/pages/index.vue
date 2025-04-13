@@ -216,9 +216,15 @@ onMounted(() => {
 }
 
 /* Extra large devices */
-@media (min-width: 1300px) {
+@media (min-width: 1400px) {
   .svg-title-text {
     font-size: 200px;
+  }
+}
+
+@media (min-width: 1500px) {
+  .svg-title-text {
+    font-size: 300px;
   }
 }
 
