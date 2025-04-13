@@ -218,21 +218,21 @@ onMounted(() => {
 /* Extra large devices */
 @media (min-width: 1300px) {
   .svg-title-text {
-    font-size: 300px;
+    font-size: 200px;
   }
 }
 
 /* XXL devices (wide screens) */
 @media (min-width: 1900px) {
   .svg-title-text {
-    font-size: 300px;
+    font-size: 200px;
   }
 }
 
 /* Ultra wide screens */
 @media (min-width: 2400px) {
   .svg-title-text {
-    font-size: 300px;
+    font-size: 200px;
   }
 }
 
