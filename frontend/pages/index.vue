@@ -218,7 +218,7 @@ onMounted(() => {
 /* Extra large devices */
 @media (min-width: 1300px) {
   .svg-title-text {
-    font-size: 300px;
+    font-size: 200px;
   }
 }
 
