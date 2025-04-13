@@ -48,17 +48,22 @@ export const useUserService = () => {
   const api = useApi();
 
   // Get user dashboard data
-  const getUserData = async () => {
-    return api.get<UserData>('/users/me');
-  }
-  
-  // Update user wishlist
-  const updateWishlist = (wishlist: string[]) =>
-    api.put<UserData>('/users/wishlist', { wishlist });
-    
-  // Get bank recommendations
-  const getBankRecommendations = () =>
-    api.get<BankRecommendation[]>('/users/bank-recommendations');
+  const getUserDashboardData = async () => {
+    const response = await api.get<UserData>('/users/me');
+    return response;
+  };
+
+  // Get user profile data
+  const getUserProfile = () => 
+    api.get<User>('/user/profile');
+
+  // Update user profile data
+  const updateUserProfile = (userData: Partial<User>) => 
+    api.put<User>('/user/profile', userData);
+
+  // Update financial preferences
+  const updateFinancialPreferences = (preferences: UserData['financialPreferences']) => 
+    api.put<UserData>('/user/preferences', preferences);
 
   return {
     getUserData,

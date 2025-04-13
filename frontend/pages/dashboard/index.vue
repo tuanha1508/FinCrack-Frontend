@@ -191,7 +191,8 @@ const selectWishlistedCompany = (company: Company) => {
 const fetchUserData = async () => {
   isLoading.value = true;
   try {
-    const response = await userService.getUserData();
+    const response = await userService.getUserDashboardData();
+    
     if (response.error) {
       toast.add({ severity: 'error', summary: 'Error', detail: 'Error loading user data: ' + response.error });
     } else if (response.data) {

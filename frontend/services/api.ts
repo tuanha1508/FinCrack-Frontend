@@ -1,4 +1,7 @@
-import { useFetch, useRuntimeConfig, useCookie } from '#imports';
+import { useFetch, useRuntimeConfig } from '#imports';
+
+// Define TOKEN_KEY to match the one in useAuth.ts
+const TOKEN_KEY = 'auth_token';
 
 // Types
 export interface ApiResponse<T> {
@@ -27,24 +30,12 @@ export const useApi = () => {
   ): Promise<ApiResponse<T>> => {
     const { method = 'GET', body, headers = {} } = options;
 
-    // Get auth token from both cookie and localStorage for compatibility
-    const tokenCookie = useCookie('auth_token');
-    const authToken = process.client 
-      ? (localStorage.getItem('auth_token') || tokenCookie.value) 
-      : tokenCookie.value;
+    // Check for admin bypass token in localStorage
+    const authToken = process.client ? localStorage.getItem(TOKEN_KEY) : null;
     
-    // Debug token info
-    if (process.client) {
-      console.log(`API Request to ${endpoint}`);
-      console.log(`- Token from localStorage: ${localStorage.getItem('auth_token') ? 'Found' : 'Not found'}`);
-      console.log(`- Token from cookie: ${tokenCookie.value ? 'Found' : 'Not found'}`);
-      console.log(`- Using token: ${authToken ? 'Yes' : 'No'}`);
-      
-      // If no token for non-auth endpoint, show warning
-      if (!authToken && !endpoint.includes('/auth/')) {
-        console.warn(`No auth token available for protected endpoint: ${endpoint}`);
-        console.log('Local storage keys:', Object.keys(localStorage));
-      }
+    // Debug token info - reduced logging
+    if (process.client && !authToken && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/signup')) {
+      console.log(`API Request to ${endpoint} with no token - possible auth issue`);
     }
     
     // If using admin bypass token, return mock responses for auth-related endpoints
@@ -75,7 +66,7 @@ export const useApi = () => {
         };
       }
       
-      // Mock user data for /users/me endpoint when using admin bypass
+      // Handle user dashboard data
       if (endpoint === '/users/me') {
         return {
           data: {
@@ -108,69 +99,40 @@ export const useApi = () => {
         ...headers,
       };
       
-      // Log the final headers for debugging
-      console.log(`API Request headers for ${endpoint}:`, requestHeaders);
-      
-      // Set credentials to include for cookies
-      const { data, error } = await useFetch(`${baseUrl}${endpoint}`, {
+      // Use native fetch instead of useFetch
+      const response = await fetch(`${baseUrl}${endpoint}`, {
         method,
-        body,
+        body: body ? JSON.stringify(body) : undefined,
         headers: requestHeaders,
-        credentials: 'include'
+        credentials: 'include', // Include cookies if necessary
       });
-
-      if (error.value) {
-        console.error(`API error for ${endpoint}:`, error.value);
-        
-        // For users/me, return mock data instead of error
-        if (endpoint === '/users/me' && process.client) {
-          console.log('Returning mock user data for /users/me due to error');
-          return {
-            data: {
-              id: 'mock-user-id',
-              email: 'mock@example.com',
-              firstName: 'Mock',
-              lastName: 'User',
-              createdAt: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              wishlist: [],
-              bankRecommendations: []
-            } as T,
-            status: 200
-          };
-        }
-        
+      
+      let data;
+      let errorMessage;
+      
+      try {
+        data = await response.json();
+      } catch (e) {
+        // Handle non-JSON responses
+        const text = await response.text();
+        errorMessage = text || 'Invalid response format';
+      }
+      
+      if (!response.ok) {
+        // Only log errors, not successful responses
+        console.error(`API Error [${endpoint}] ${response.status}: ${data?.message || errorMessage || response.statusText}`);
         return {
-          error: error.value?.message || 'An error occurred',
-          status: error.value?.statusCode || 500,
+          error: data?.message || errorMessage || `Error ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
       return {
-        data: data.value as T,
-        status: 200,
+        data: data as T,
+        status: response.status,
       };
     } catch (err: any) {
-      console.error(`Exception in API request to ${endpoint}:`, err);
-      
-      // For users/me, return mock data instead of error
-      if (endpoint === '/users/me' && process.client) {
-        console.log('Returning mock user data for /users/me due to exception');
-        return {
-          data: {
-            id: 'mock-user-id-exception',
-            email: 'mock-exception@example.com',
-            firstName: 'Mock',
-            lastName: 'User',
-            createdAt: new Date().toISOString(),
-            updatedAt: new Date().toISOString(),
-            wishlist: [],
-            bankRecommendations: []
-          } as T,
-          status: 200
-        };
-      }
-      
+      console.error(`API Exception [${endpoint}]:`, err.message);
       return {
         error: err.message || 'An error occurred',
         status: err.statusCode || 500,
