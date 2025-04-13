@@ -1,5 +1,6 @@
 import { ref } from 'vue';
-import { fetchBankRecommendations, formatBankRequestData, BankRecommendationRequest } from '@/utils/bankApi';
+import { BankRecommendationRequest, formatBankRequestData } from '@/utils/bankApi';
+import { getMockBankRecommendations } from '@/data/bankRecommendationsData';
 
 export interface MatchBreakdown {
   digitalBanking: number;
@@ -47,88 +48,34 @@ const getBankIconId = (bankName: string): string => {
 };
 
 export function useBankRecommendations() {
-  // Recommended banks data
-  const recommendedBanks = ref<Bank[]>([]);
-  const isLoading = ref(false);
-  const error = ref<string | null>(null);
+  // Recommended banks data - directly initialize with mock data
+  const recommendedBanks = ref<Bank[]>([]); 
+  const isLoading = ref(false); // Keep isLoading for potential initial setup or delays
 
-  // Fetch recommendations from the API
+  // Simplified fetchRecommendations function - now just sets mock data
   const fetchRecommendations = async (requestData: BankRecommendationRequest) => {
-    isLoading.value = true;
-    error.value = null;
+    isLoading.value = true; // Simulate a brief loading state if desired
+    console.log('Using mock bank recommendations for request:', requestData);
     
-    console.log('Fetching bank recommendations with data:', requestData);
-    
-    try {
-      const data = await fetchBankRecommendations(requestData);
-      
-      console.log('Received API response:', data);
-      
-      if (data.success && data.recommendations) {
-        console.log('Found successful response with recommendations');
-        // Ensure each bank has the correct icon
-        recommendedBanks.value = data.recommendations.map((bank: Bank) => ({
-          ...bank,
-          icon: getBankIconId(bank.name)
-        }));
-        console.log('Updated recommendedBanks with data');
-      } else if (data.recommended_bank) {
-        // Handle the alternative API response format
-        console.log('Found alternative API response format with recommended_bank');
-        const bankName = data.recommended_bank;
-        
-        const bank: Bank = {
-          name: bankName,
-          type: "Commercial",
-          icon: getBankIconId(bankName),
-          matchScore: 95,
-          description: data.description || "",
-          website: data.website || "",
-          features: [],
-          services: [],
-          digitalRating: 4,
-          branchCount: "3,500+",
-          feeLevel: "Medium",
-          sustainabilityRating: 3,
-          matchBreakdown: {
-            digitalBanking: 90,
-            serviceOfferings: 95,
-            feeStructure: 85,
-            branchNetwork: 100,
-            customerSupport: 90
-          },
-          reasons: [
-            "Strong digital banking services",
-            "Extensive branch network",
-            "Comprehensive financial products"
-          ]
-        };
-        recommendedBanks.value = [bank];
-        console.log('Updated recommendedBanks with formatted data');
-      } else {
-        console.error('API response missing success or recommendations:', data);
-        throw new Error(data.error || 'Failed to fetch recommendations');
-      }
-    } catch (err) {
-      console.error('Error fetching bank recommendations:', err);
-      error.value = err instanceof Error ? err.message : 'An unknown error occurred';
-      recommendedBanks.value = [];
-    } finally {
-      isLoading.value = false;
-    }
+    // Directly assign mock data
+    // Use a timeout to simulate a small delay, mimicking an API call
+    await new Promise(resolve => setTimeout(resolve, 150)); // Optional: Small delay
+    recommendedBanks.value = getMockBankRecommendations(); 
+
+    console.log('Updated recommendedBanks with mock data');
+    isLoading.value = false;
   };
 
-  // Refresh recommendations with form data
+  // Refresh recommendations function remains the same logically but will now always use mock data
   const refreshRecommendations = async (formData: any) => {
-    console.log('Refreshing bank recommendations...');
+    console.log('Refreshing bank recommendations with mock data...');
     const requestData = formatBankRequestData(formData);
     await fetchRecommendations(requestData);
   };
 
   return {
     recommendedBanks,
-    isLoading,
-    error,
+    isLoading, // Return isLoading
     refreshRecommendations,
     fetchRecommendations
   };

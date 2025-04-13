@@ -53,21 +53,14 @@ export const useUserService = () => {
     return response;
   };
 
-  // Get user profile data
-  const getUserProfile = () => 
-    api.get<User>('/user/profile');
-
-  // Update user profile data
-  const updateUserProfile = (userData: Partial<User>) => 
-    api.put<User>('/user/profile', userData);
-
-  // Update financial preferences
-  const updateFinancialPreferences = (preferences: UserData['financialPreferences']) => 
-    api.put<UserData>('/user/preferences', preferences);
+  // Get bank recommendations for the user
+  const getBankRecommendations = async () => {
+    const response = await api.get<BankRecommendation[]>('/users/bank-recommendations');
+    return response;
+  };
 
   return {
-    getUserData,
-    updateWishlist,
+    getUserDashboardData,
     getBankRecommendations
   };
 }; 

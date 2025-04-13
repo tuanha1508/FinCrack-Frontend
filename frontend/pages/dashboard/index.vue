@@ -32,7 +32,19 @@
 
     <!-- Wishlist Section -->
     <div v-if="wishlistedCompanies.length > 0" class="mb-6 border border-black p-4 bg-white text-black">
-      <h2 class="text-xl font-semibold mb-4 text-black">My Wishlist</h2>
+      <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-semibold text-black">My Wishlist</h2>
+        <NuxtLink to="/dashboard/wishlist">
+          <UiButton 
+            variant="outline" 
+            size="sm" 
+            class="gap-2 text-black border-black hover:bg-black/5"
+          >
+            <Icon name="lucide:list" class="h-4 w-4" />
+            View All
+          </UiButton>
+        </NuxtLink>
+      </div>
       <div class="space-y-2">
         <!-- Wishlist Header -->
         <div class="grid grid-cols-12 gap-4 px-2 py-1 border-b border-black font-medium text-xs text-black">
@@ -105,6 +117,8 @@ import type { UserData } from '@/services/user'
 import { useToast } from 'primevue/usetoast'
 import { useWishlistStore } from '@/stores/wishlistStore'
 import tickersData from '@/constants/tickers.json'
+import wishlistData from '@/data/wishlistData'
+import type { WishlistItem } from '@/data/types'
 
 // Set the dashboard layout
 definePageMeta({
@@ -119,17 +133,6 @@ interface Company {
   symbol: string;
   exchange?: string;
   currency?: string;
-}
-
-// Define interface for wishlist items including placeholder data
-interface WishlistItem extends Company {
-  marketCap?: string | number;
-  changePercent: number; // Made non-optional with default
-  price?: string | number;
-  peRatio?: number | string;
-  revenue?: string | number; // Added placeholder
-  // logo?: string; // Placeholder for logo URL if needed later
-  // exchangeFlag?: string; // Placeholder for flag if needed later
 }
 
 const selectedCompany = ref<Company | null>(null);
@@ -152,6 +155,12 @@ const tickerMap = computed(() => {
 const wishlistedCompanies = computed<WishlistItem[]>(() => {
   return wishlistStore.wishlist
     .map(symbol => {
+      // First check if we have rich data in our mock wishlist data
+      if (wishlistData[symbol]) {
+        return wishlistData[symbol];
+      }
+      
+      // Fallback to basic ticker data if not in our mock data
       const companyInfo = tickerMap.value.get(symbol);
       if (companyInfo) {
         // Explicitly create an object matching WishlistItem structure

@@ -152,4 +152,4 @@ export async function exampleDirectApiCall() {
     console.error('Error in example API call:', error);
     throw error;
   }
-} 
+}

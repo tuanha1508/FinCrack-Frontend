@@ -58,6 +58,11 @@ const navigationItems = [
     path: '/dashboard'
   },
   {
+    title: 'Watchlist',
+    icon: 'lucide:star',
+    path: '/dashboard/wishlist'
+  },
+  {
     title: 'Your Virtual Assistant',
     icon: 'lucide:bot',
     path: '/dashboard/virtual-assistant'

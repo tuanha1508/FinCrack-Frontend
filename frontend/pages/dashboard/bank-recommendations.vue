@@ -6,11 +6,13 @@
         <h1 class="text-2xl font-semibold text-foreground">Bank Recommendations</h1>
         <p class="text-muted-foreground">Get personalized bank recommendations based on your preferences</p>
       </div>
-      <div class="flex items-center gap-2" v-if="showResults">
-        <UiButton variant="outline" size="sm" class="gap-2" @click="resetForm">
-          <Icon name="lucide:chevron-left" class="h-4 w-4" />
-          Back to Form
-        </UiButton>
+      <div class="flex items-center gap-2">
+        <div v-if="showResults">
+          <UiButton variant="outline" size="sm" class="gap-2" @click="resetForm">
+            <Icon name="lucide:chevron-left" class="h-4 w-4" />
+            Back to Form
+          </UiButton>
+        </div>
       </div>
     </div>
 
@@ -53,26 +55,16 @@
         <p>Loading your personalized bank recommendations...</p>
       </div>
 
-      <!-- Error state -->
-      <div v-else-if="error" class="rounded-lg bg-destructive/10 p-4 mb-6">
-        <h3 class="text-lg font-medium text-destructive mb-2">Error Loading Recommendations</h3>
-        <p class="text-sm mb-2">{{ error }}</p>
-        <UiButton variant="outline" size="sm" @click="resetForm">
-          <Icon name="lucide:chevron-left" class="h-4 w-4 mr-2" />
-          Back to Form
-        </UiButton>
-      </div>
-
       <!-- Empty state -->
-      <div v-else-if="!recommendedBanks || recommendedBanks.length === 0" class="rounded-lg bg-muted p-8 text-center mb-6">
+      <div v-else-if="!isLoading && (!recommendedBanks || recommendedBanks.length === 0)" class="rounded-lg bg-muted p-8 text-center mb-6">
         <Icon name="lucide:database" class="h-12 w-12 text-muted-foreground mx-auto mb-4" />
         <h3 class="text-lg font-medium mb-2">No Recommendations Found</h3>
-        <p class="text-sm text-muted-foreground mb-4">We couldn't find any bank recommendations that match your preferences.</p>
+        <p class="text-sm text-muted-foreground mb-4">We couldn't find any bank recommendations based on the mock data.</p>
         <UiButton variant="outline" @click="resetForm">Modify Preferences</UiButton>
       </div>
 
       <!-- Bank recommendations list -->
-      <div v-else class="space-y-6">
+      <div v-else-if="!isLoading && recommendedBanks && recommendedBanks.length > 0" class="space-y-6">
         <BankCard v-for="(bank, index) in recommendedBanks" :key="index" :bank="bank" />
       </div>
     </div>
@@ -89,7 +81,6 @@ import BankCard from '@/components/bank/BankCard.vue';
 import { useBankForm } from '@/composables/useBankForm';
 import { useBankRecommendations } from '@/composables/useBankRecommendations';
 import { formatBankRequestData } from '@/utils/bankApi';
-import { watch } from 'vue';
 
 // Set the dashboard layout
 definePageMeta({
@@ -111,7 +102,6 @@ const {
 const { 
   recommendedBanks, 
   isLoading, 
-  error, 
   fetchRecommendations 
 } = useBankRecommendations();
 
@@ -145,14 +135,6 @@ const submitForm = async () => {
   const requestData = formatBankRequestData(formData.value);
   await fetchRecommendations(requestData);
 };
-
-// Watch for errors
-watch(error, (newError) => {
-  if (newError) {
-    console.error('Bank recommendation error:', newError);
-    // Optionally show an error message to the user
-  }
-});
 </script>
 
 <style scoped>
