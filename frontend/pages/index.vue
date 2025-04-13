@@ -43,7 +43,7 @@
         </div>
       </div>
       
-      <div class="mt-12 flex flex-row gap-6">
+      <div class="flex flex-row gap-6">
         <router-link to="/sign-in" 
                      :class="[
                        isDark ? 'bg-white text-black hover:bg-gray-100' : 'bg-black text-white hover:bg-gray-800',

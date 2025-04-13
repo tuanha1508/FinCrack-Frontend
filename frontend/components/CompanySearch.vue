@@ -126,19 +126,91 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useAlphaVantage } from '../composables/useAlphaVantage'
+import tickersData from '@/constants/tickers.json'
+
+// Define types
+interface SearchResult {
+  symbol: string;
+  name: string;
+  type: string;
+  region: string;
+  currency: string;
+}
+
+interface CompanyDetails {
+  Symbol: string;
+  Name: string;
+  Description: string;
+  Exchange: string;
+  Currency: string;
+  Country: string;
+  Sector: string;
+  Industry: string;
+  MarketCapitalization: string;
+  PERatio: string;
+  EPS: string;
+  DividendYield: string;
+  High52: string;
+  Low52: string;
+  [key: string]: string; // Allow string indexing
+}
 
 const searchQuery = ref('')
 const currentAction = ref<'search' | 'details'>('search')
+const isLoading = ref(false)
+const error = ref('')
+const searchResults = ref<SearchResult[]>([])
+const companyData = ref<CompanyDetails>({
+  Symbol: '',
+  Name: '',
+  Description: '',
+  Exchange: '',
+  Currency: '',
+  Country: '',
+  Sector: '',
+  Industry: '',
+  MarketCapitalization: '',
+  PERatio: '',
+  EPS: '',
+  DividendYield: '',
+  High52: '',
+  Low52: ''
+})
 
-const { 
-  isLoading, 
-  error, 
-  searchResults, 
-  companyData, 
-  search, 
-  getCompany
-} = useAlphaVantage()
+/**
+ * Search for companies using local data
+ */
+async function search(query: string) {
+  if (!query.trim()) return
+  
+  isLoading.value = true
+  error.value = ''
+  
+  try {
+    // Use local data from tickers.json
+    const normalizedQuery = query.toLowerCase()
+    const results = Object.values(tickersData)
+      .filter(company => 
+        company.title.toLowerCase().includes(normalizedQuery) || 
+        company.ticker.toLowerCase().includes(normalizedQuery)
+      )
+      .slice(0, 20) // Limit results
+      .map(company => ({
+        symbol: company.ticker,
+        name: company.title,
+        type: 'Equity',
+        region: 'US',
+        currency: 'USD'
+      }))
+    
+    searchResults.value = results
+  } catch (err) {
+    console.error('Error searching companies:', err)
+    error.value = 'Failed to search companies. Please try again.'
+  } finally {
+    isLoading.value = false
+  }
+}
 
 /**
  * Handle search form submission
@@ -155,7 +227,40 @@ async function handleSearch() {
  */
 async function getCompanyDetails(symbol: string) {
   currentAction.value = 'details'
-  await getCompany(symbol)
+  isLoading.value = true
+  error.value = ''
+  
+  try {
+    // Find company in local data
+    const company = Object.values(tickersData).find(c => c.ticker === symbol)
+    
+    if (!company) {
+      throw new Error('Company not found')
+    }
+    
+    // Create mock data for display
+    companyData.value = {
+      Symbol: company.ticker,
+      Name: company.title,
+      Description: `${company.title} is a publicly traded company with the ticker symbol ${company.ticker}.`,
+      Exchange: 'NASDAQ',
+      Currency: 'USD',
+      Country: 'USA',
+      Sector: 'Technology',
+      Industry: 'Technology',
+      MarketCapitalization: '1000000000',
+      PERatio: '25.40',
+      EPS: '3.45',
+      DividendYield: '1.2',
+      High52: '200.00',
+      Low52: '100.00'
+    }
+  } catch (err) {
+    console.error('Error fetching company details:', err)
+    error.value = 'Failed to fetch company details. Please try again.'
+  } finally {
+    isLoading.value = false
+  }
 }
 
 /**

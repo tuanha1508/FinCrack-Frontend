@@ -1,12 +1,13 @@
 <template>
   <div class="w-full">
-    <div class="relative">
+    <div class="relative" ref="searchContainer">
       <input
         v-model="searchQuery"
         type="text"
         class="w-full px-4 py-3 pl-10 pr-12 border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
         placeholder="Search for a company (e.g., Apple, AAPL, Microsoft)"
         @keyup.enter="handleSearch"
+        @focus="searchQuery.length > 1 && (showSuggestions = true)"
       />
       <div class="absolute left-3 top-0 h-full flex items-center pointer-events-none">
         <Icon 
@@ -59,15 +60,28 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
+import tickersData from '@/constants/tickers.json';
 
 interface Company {
   name: string;
   symbol: string;
-  exchange: string;
+  exchange?: string;
   type?: string;
   currency?: string;
 }
+
+// Convert the tickers data to Company array format
+const companiesFromJson = Object.values(tickersData).map(company => ({
+  name: company.title,
+  symbol: company.ticker,
+  exchange: 'Unknown', // Default value as it's not in the JSON
+  currency: 'USD' // Default value as it's not in the JSON
+}));
+
+// Cache for search results
+const searchCache = new Map<string, Company[]>();
+const CACHE_SIZE_LIMIT = 20; // Limit cache size to prevent memory issues
 
 const searchQuery = ref('');
 const suggestions = ref<Company[]>([]);
@@ -76,6 +90,22 @@ const isLoading = ref(false);
 const selectedCompany = ref<Company | null>(null);
 const hasError = ref(false);
 const errorMessage = ref('');
+const searchContainer = ref<HTMLElement | null>(null);
+
+// Click outside listener
+onMounted(() => {
+  document.addEventListener('click', handleClickOutside);
+});
+
+onUnmounted(() => {
+  document.removeEventListener('click', handleClickOutside);
+});
+
+const handleClickOutside = (event: Event) => {
+  if (searchContainer.value && !searchContainer.value.contains(event.target as Node)) {
+    showSuggestions.value = false;
+  }
+};
 
 // Emit event when company is selected
 const emit = defineEmits(['companySelected']);
@@ -84,6 +114,7 @@ const emit = defineEmits(['companySelected']);
 watch(searchQuery, (newQuery) => {
   if (newQuery.length > 1) {
     searchCompanies(newQuery);
+    showSuggestions.value = true;
   } else {
     suggestions.value = [];
     showSuggestions.value = false;
@@ -91,69 +122,61 @@ watch(searchQuery, (newQuery) => {
   }
 });
 
-// Search for companies using the API
-const searchCompanies = async (query: string) => {
+// Search for companies using JSON data
+const searchCompanies = (query: string) => {
   isLoading.value = true;
   hasError.value = false;
   
-  try {
-    const response = await fetch(`/api/company-search?searchTerm=${encodeURIComponent(query)}`);
+  // Simulate API delay
+  setTimeout(() => {
+    const normalizedQuery = query.toLowerCase();
     
-    // Check if response is JSON before parsing
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      throw new Error('Server returned non-JSON response. The server might be down or restarting.');
+    // Check cache first
+    if (searchCache.has(normalizedQuery)) {
+      suggestions.value = searchCache.get(normalizedQuery) || [];
+      isLoading.value = false;
+      return;
     }
     
-    const data = await response.json();
+    const maxResults = 20; // Limit results for better performance
+    let resultCount = 0;
     
-    if (data.error) {
-      console.error('Error from API:', data.error);
-      errorMessage.value = data.error;
-      hasError.value = true;
+    const results = companiesFromJson.filter(company => {
+      // Exit early once we have enough matches
+      if (resultCount >= maxResults) return false;
       
-      // Use mock data if available
-      if (data.mockData && data.mockData.length > 0) {
-        suggestions.value = data.mockData;
-        showSuggestions.value = true;
-      } else {
-        suggestions.value = [];
-        showSuggestions.value = false;
+      const nameMatch = company.name.toLowerCase().includes(normalizedQuery);
+      const symbolMatch = company.symbol.toLowerCase().includes(normalizedQuery);
+      
+      if (nameMatch || symbolMatch) {
+        resultCount++;
+        return true;
       }
-    } else {
-      suggestions.value = data.map((item: any) => ({
-        name: item.name,
-        symbol: item.symbol,
-        exchange: item.exchange || 'Unknown',
-        currency: item.currency || ''
-      }));
-      showSuggestions.value = true;
-    }
-  } catch (error) {
-    console.error('Error searching companies:', error);
-    hasError.value = true;
-    errorMessage.value = 'Server error or connection issue. Please try again later.';
-    suggestions.value = [];
-    showSuggestions.value = false;
+      
+      return false;
+    });
     
-    // Provide mock data for a better user experience during server issues
-    suggestions.value = [
-      { symbol: 'AAPL', name: 'Apple Inc.', exchange: 'NASDAQ' },
-      { symbol: 'MSFT', name: 'Microsoft Corporation', exchange: 'NASDAQ' },
-      { symbol: 'AMZN', name: 'Amazon.com Inc.', exchange: 'NASDAQ' },
-      { symbol: 'GOOGL', name: 'Alphabet Inc.', exchange: 'NASDAQ' },
-      { symbol: 'META', name: 'Meta Platforms Inc.', exchange: 'NASDAQ' }
-    ];
-    showSuggestions.value = true;
-  } finally {
+    suggestions.value = results;
+    
+    // Cache the results for future use
+    if (searchCache.size >= CACHE_SIZE_LIMIT) {
+      // Remove the oldest entry if cache is full
+      const cacheKeys = Array.from(searchCache.keys());
+      if (cacheKeys.length > 0) {
+        searchCache.delete(cacheKeys[0]);
+      }
+    }
+    searchCache.set(normalizedQuery, results);
+    
     isLoading.value = false;
-  }
+  }, 300);
 };
 
 // Handle search submission
 const handleSearch = () => {
   if (searchQuery.value) {
     searchCompanies(searchQuery.value);
+    showSuggestions.value = true;
   }
 };
 

@@ -56,19 +56,19 @@
 
     <!-- Company search bar -->
     <div class="mb-6">
-      <CompanySearchBarHardcoded @companySelected="handleCompanySelect" />
+      <CompanySearchBar @companySelected="handleCompanySelect" />
     </div>
 
     <!-- Company financial overview -->
-    <CompanyFinancialOverviewHardcoded :company="selectedCompany" />
+    <CompanyFinancialOverview :company="selectedCompany" />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { definePageMeta } from '#imports'
-import CompanySearchBarHardcoded from '@/components/dashboard/CompanySearchBarHardcoded.vue'
-import CompanyFinancialOverviewHardcoded from '@/components/dashboard/CompanyFinancialOverviewHardcoded.vue'
+import CompanySearchBar from '@/components/dashboard/CompanySearchBar.vue'
+import CompanyFinancialOverview from '@/components/dashboard/CompanyFinancialOverview.vue'
 import { useUserService } from '@/services/user'
 import type { UserData } from '@/services/user'
 import { useToast } from 'primevue/usetoast'
@@ -80,19 +80,23 @@ definePageMeta({
   requiresAuth: true,
 })
 
-interface Company {
+const selectedCompany = ref<{
   name: string;
   symbol: string;
-  exchange: string;
-}
-
-const selectedCompany = ref<Company | null>(null);
+  exchange?: string;
+  currency?: string;
+} | null>(null);
 const userData = ref<UserData | null>(null);
 const isLoading = ref(false);
 const toast = useToast();
 const userService = useUserService();
 
-const handleCompanySelect = (company: Company) => {
+const handleCompanySelect = (company: {
+  name: string;
+  symbol: string;
+  exchange?: string;
+  currency?: string;
+}) => {
   selectedCompany.value = company;
 };
 

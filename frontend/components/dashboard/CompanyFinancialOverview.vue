@@ -201,7 +201,7 @@
         </div>
         
         <div v-else class="space-y-4">
-          <div v-for="(article, i) in alphaVantageNews" :key="i" class="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0">
+          <div v-for="(article, i) in companyNews" :key="i" class="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0">
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
                 <h4 class="font-medium text-foreground">{{ article.title }}</h4>
@@ -241,57 +241,89 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch } from 'vue';
-import { useRuntimeConfig } from '#imports';
-// The UI components are auto-imported by shadcn-nuxt
+import { ref, watch } from 'vue';
+import companiesData from '@/data/companiesData';
 
+// Define interfaces
 interface Company {
   name: string;
   symbol: string;
-  exchange: string;
+  exchange?: string;
   currency?: string;
 }
 
-// Alpha Vantage News Item interface
-interface AlphaVantageNewsItem {
+// Define interfaces that match our data source structure
+interface StockData {
+  price: number;
+  change: number;
+  changePercent: number;
+  open: number;
+  high: number;
+  low: number;
+  volume: number;
+  prevClose: number;
+  marketCap: number;
+  peRatio: number;
+  dividendYield: number;
+}
+
+interface FinancialData {
+  revenue: number;
+  revenueGrowth: number;
+  grossProfit: number;
+  grossProfitGrowth: number;
+  netIncome: number;
+  netIncomeGrowth: number;
+  eps: number;
+  epsGrowth: number;
+  profitMargin: number;
+  profitMarginChange: number;
+}
+
+// News Item interface
+interface NewsItem {
   title: string;
   url: string;
   time_published: string;
   summary: string;
   source: string;
-  overall_sentiment_score: number;
-  overall_sentiment_label: string;
-  authors?: string[];
-  banner_image?: string;
-  category_within_source?: string;
-  source_domain?: string;
-  topics?: any[];
-  ticker_sentiment?: Array<{
-    ticker: string;
-    relevance_score: number;
-    ticker_sentiment_score: number;
-  }>;
+  overall_sentiment_score?: number;
 }
 
-// Props
-const props = defineProps<{
-  company: Company | null;
-}>();
+// Define component name
+defineOptions({
+  name: 'CompanyFinancialOverview'
+});
 
-// State
-const stockData = ref({
+// Define props
+const props = defineProps({
+  company: {
+    type: Object as () => Company | null,
+    default: null
+  }
+});
+
+// Hardcoded company stock data
+const stockData = ref<StockData>({
   price: 0,
   change: 0,
   changePercent: 0,
+  open: 0,
+  high: 0,
+  low: 0,
+  volume: 0, 
+  prevClose: 0,
   marketCap: 0,
-  volume: 0,
   peRatio: 0,
   dividendYield: 0
 });
 
-const financialData = ref({
+// Hardcoded financial data
+const financialData = ref<FinancialData>({
   revenue: 0,
-  revenueGrowth: 0,
+  revenueGrowth: 0, 
+  grossProfit: 0,
+  grossProfitGrowth: 0,
   netIncome: 0,
   netIncomeGrowth: 0,
   eps: 0,
@@ -304,9 +336,8 @@ const isLoading = ref(false);
 const errorMessage = ref('');
 const hasApiError = ref(false);
 
-// Alpha Vantage News
-const runtimeConfig = useRuntimeConfig();
-const alphaVantageNews = ref<AlphaVantageNewsItem[]>([]);
+// News data
+const companyNews = ref<NewsItem[]>([]);
 const newsLoading = ref(false);
 const newsError = ref<string | null>(null);
 
@@ -333,189 +364,32 @@ const formatLargeNumber = (value: number): string => {
   return value.toString();
 };
 
-// Fetch company profile data
-const fetchCompanyProfile = async (symbol: string) => {
-  try {
-    // Add timestamp to prevent caching
-    const timestamp = new Date().getTime();
-    const response = await fetch(`/api/company-profile?symbol=${symbol}&_t=${timestamp}`);
-    const data = await response.json();
-    
-    if (data && data.length > 0) {
-      const profile = data[0];
-      
-      // Update stock data with safe access to properties
-      stockData.value = {
-        price: profile.price || 0,
-        change: profile.changes || 0,
-        changePercent: (profile.changesPercentage || 0),
-        marketCap: profile.mktCap || 0,
-        volume: profile.volume || 0,
-        peRatio: profile.pe || 0,
-        dividendYield: profile.price && profile.lastDiv ? (profile.lastDiv / profile.price) * 100 : 0
-      };
-    } else if (data.error) {
-      console.error('Error from API:', data.error);
-      errorMessage.value = data.error;
-      hasApiError.value = true;
-    } else {
-      console.error('No profile data returned for symbol:', symbol);
-      errorMessage.value = `No data found for symbol: ${symbol}`;
-      hasApiError.value = true;
-    }
-  } catch (error) {
-    console.error('Error fetching company profile:', error);
-    errorMessage.value = 'Failed to fetch company profile data';
-    hasApiError.value = true;
-  }
-};
-
-// Fetch financial metrics
-const fetchFinancialMetrics = async (symbol: string) => {
-  try {
-    // Add timestamp to prevent caching
-    const timestamp = new Date().getTime();
-    const response = await fetch(`/api/financial-metrics?symbol=${symbol}&_t=${timestamp}`);
-    const data = await response.json();
-    
-    if (!data.error) {
-      // Initialize with default values to ensure properties exist
-      const financials = {
-        revenue: 0,
-        revenueGrowth: 0,
-        netIncome: 0,
-        netIncomeGrowth: 0,
-        eps: 0,
-        epsGrowth: 0,
-        profitMargin: 0,
-        profitMarginChange: 0
-      };
-      
-      // Extract metrics from different parts of the response
-      if (data.metrics && data.metrics.length > 0) {
-        const metrics = data.metrics[0];
-        financials.revenue = metrics.revenuePerShareTTM ? metrics.revenuePerShareTTM * (metrics.weightedAverageShsOutTTM || 0) : 0;
-        financials.netIncome = metrics.netIncomeTTM || 0;
-        financials.eps = metrics.epsTTM || 0;
-        financials.profitMargin = metrics.netProfitMarginTTM ? metrics.netProfitMarginTTM * 100 : 0;
-      }
-      
-      // Extract growth data
-      if (data.growth && data.growth.length > 0) {
-        const growth = data.growth[0];
-        financials.revenueGrowth = growth.growthRevenue ? growth.growthRevenue * 100 : 0;
-        financials.netIncomeGrowth = growth.growthNetIncome ? growth.growthNetIncome * 100 : 0;
-        financials.epsGrowth = growth.growthEPS ? growth.growthEPS * 100 : 0;
-        
-        // Calculate profit margin change if we have multiple years
-        if (data.growth.length > 1) {
-          const previousYear = data.growth[1];
-          const currentNetProfitMargin = growth.netProfitMargin || 0;
-          const previousNetProfitMargin = previousYear.netProfitMargin || 0;
-          financials.profitMarginChange = (currentNetProfitMargin - previousNetProfitMargin) * 100;
-        }
-      }
-      
-      // Update financial data state
-      financialData.value = financials;
-    } else {
-      console.error('Error fetching financial metrics:', data.error);
-    }
-  } catch (error) {
-    console.error('Error fetching financial metrics:', error);
-  }
-};
-
-// Fetch all data for a company
-const fetchCompanyData = async (symbol: string) => {
+// Load hardcoded data for the company
+const loadHardcodedData = (symbol: string) => {
   isLoading.value = true;
-  errorMessage.value = '';
   hasApiError.value = false;
+  errorMessage.value = '';
+  newsLoading.value = true;
+  newsError.value = null;
   
-  // Reset data to ensure UI shows fresh data
-  stockData.value = {
-    price: 0,
-    change: 0,
-    changePercent: 0,
-    marketCap: 0,
-    volume: 0,
-    peRatio: 0,
-    dividendYield: 0
-  };
-  
-  financialData.value = {
-    revenue: 0,
-    revenueGrowth: 0,
-    netIncome: 0,
-    netIncomeGrowth: 0,
-    eps: 0,
-    epsGrowth: 0,
-    profitMargin: 0,
-    profitMarginChange: 0
-  };
-  
-  try {
-    await Promise.all([
-      fetchCompanyProfile(symbol),
-      fetchFinancialMetrics(symbol)
-    ]);
-  } catch (error) {
-    console.error('Error fetching company data:', error);
-    errorMessage.value = 'An error occurred while fetching company data';
-    hasApiError.value = true;
-  } finally {
+  // Simulate API delay
+  setTimeout(() => {
+    const companyKey = Object.keys(companiesData).find(key => key === symbol) || 'AAPL';
+    const data = companiesData[companyKey];
+    
+    // Update stock data
+    stockData.value = data.stockData;
+    
+    // Update financial data
+    financialData.value = data.financialData;
+    
+    // Update news
+    companyNews.value = data.news;
+    
+    // Update loading states
     isLoading.value = false;
-  }
-};
-
-// Fetch news from Finnhub instead of Alpha Vantage
-const fetchAlphaVantageNews = async (symbol: string) => {
-  try {
-    newsLoading.value = true;
-    newsError.value = null;
-    
-    // Use server-side API endpoint instead of direct Finnhub call
-    const timestamp = new Date().getTime();
-    const response = await fetch(`/api/stock-news?symbol=${encodeURIComponent(symbol)}&limit=5&_t=${timestamp}`);
-    
-    if (!response.ok) {
-      throw new Error(`API request failed with status: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    
-    if (data.feed && Array.isArray(data.feed) && data.feed.length > 0) {
-      // Transform the news format to match our existing structure
-      alphaVantageNews.value = data.feed.slice(0, 5).map((item: any) => ({
-        title: item.headline || item.title,
-        url: item.url,
-        time_published: item.datetime ? new Date(item.datetime * 1000).toISOString() : new Date().toISOString(),
-        authors: [item.source || 'Finnhub'],
-        summary: item.summary || '',
-        banner_image: item.image || '',
-        source: item.source,
-        category_within_source: item.category || '',
-        source_domain: item.source,
-        topics: [],
-        overall_sentiment_score: item.sentiment || 0,
-        overall_sentiment_label: item.sentiment > 0 ? 'Positive' : item.sentiment < 0 ? 'Negative' : 'Neutral',
-        ticker_sentiment: [{
-          ticker: symbol,
-          relevance_score: 1.0,
-          ticker_sentiment_score: item.sentiment || 0
-        }]
-      }));
-    } else if (data.error) {
-      newsError.value = data.error;
-    } else {
-      newsError.value = "No news data available";
-    }
-  } catch (err) {
-    const error = err as Error;
-    newsError.value = "Failed to fetch news: " + (error.message || 'Unknown error');
-  } finally {
     newsLoading.value = false;
-  }
+  }, 800); // Add a delay to simulate real API call
 };
 
 // Format date
@@ -539,21 +413,17 @@ const formatSentiment = (score: number): string => {
   return "Neutral";
 };
 
-// Watch for changes in company and fetch data
+// Watch for changes in company and load data
 watch(() => props.company, (newCompany) => {
   if (newCompany) {
-    // Fetch financial data
-    fetchCompanyData(newCompany.symbol);
-    
-    // Fetch news data from Finnhub
-    fetchAlphaVantageNews(newCompany.symbol);
+    loadHardcodedData(newCompany.symbol);
   }
 }, { immediate: true });
 
 // Add a refresh function
 const refreshData = () => {
   if (props.company) {
-    fetchCompanyData(props.company.symbol);
+    loadHardcodedData(props.company.symbol);
   }
 };
 </script> 
