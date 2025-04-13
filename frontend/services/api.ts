@@ -31,8 +31,19 @@ export const useApi = () => {
     const authToken = process.client ? localStorage.getItem('auth_token') : null;
     
     // Debug token info
-    if (process.client && authToken) {
-      console.log(`API Request to ${endpoint} with token: ${authToken.substring(0, 10)}...`);
+    if (process.client) {
+      if (authToken) {
+        console.log(`API Request to ${endpoint} with token: ${authToken.substring(0, 10)}...`);
+      } else {
+        console.log(`API Request to ${endpoint} with NO token found in localStorage`);
+        
+        // Attempt to set token again for debugging
+        if (endpoint.includes('/auth/login') || endpoint.includes('/auth/signup')) {
+          console.log('This is a login/signup request, no token expected');
+        } else {
+          console.log('Non-auth request without token - this might indicate an authentication issue');
+        }
+      }
     }
     
     // If using admin bypass token, return mock responses for auth-related endpoints
@@ -101,13 +112,19 @@ export const useApi = () => {
     }
 
     try {
+      const requestHeaders = {
+        'Content-Type': 'application/json',
+        ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {}),
+        ...headers,
+      };
+      
+      // Log the final headers for debugging
+      console.log(`API Request headers for ${endpoint}:`, requestHeaders);
+      
       const { data, error } = await useFetch(`${baseUrl}${endpoint}`, {
         method,
         body,
-        headers: {
-          'Content-Type': 'application/json',
-          ...headers,
-        },
+        headers: requestHeaders,
       });
 
       if (error.value) {

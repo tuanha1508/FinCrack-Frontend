@@ -134,21 +134,64 @@ export function useAuth() {
       console.log('Proceeding with normal authentication flow');
       const response = await authService.login(credentials);
       
+      console.log('Login API response:', response);
+      
       if (response.error) {
         error.value = response.error;
         console.error('Authentication error:', response.error);
         return;
       }
       
-      if (response.data) {
-        token.value = response.data.token;
-        user.value = response.data.user;
-        isAuthenticated.value = true;
+      // Handle case where token might be at the root level of response
+      if (response.data && typeof response.data === 'object') {
+        console.log('Login response data:', JSON.stringify(response.data));
         
-        console.log('User authenticated via API successfully');
+        // Try to extract token from different possible locations
+        let responseToken = null;
+        let userData = null;
         
-        // Navigate to dashboard page instead of home
-        router.push('/dashboard');
+        // Case 1: Our expected format with data.token or data.access_token
+        if (response.data.token || response.data.access_token) {
+          responseToken = response.data.access_token || response.data.token;
+          userData = response.data.user;
+        } 
+        // Case 2: Token directly in response.data (if data itself is the token)
+        else if (typeof response.data === 'string' && (response.data as string).length > 20) {
+          responseToken = response.data as string;
+          userData = { email: credentials.email, name: 'User' };
+        }
+        // Case 3: Response might have access_token at the root level
+        else if (response.data.access_token && !response.data.user) {
+          responseToken = response.data.access_token;
+          userData = { email: credentials.email, name: 'User' };
+        }
+        
+        console.log('Extracted token:', responseToken ? `${responseToken.substring(0, 10)}...` : 'No token found');
+        
+        if (responseToken) {
+          token.value = responseToken;
+          user.value = userData || { email: 'user@example.com', name: 'Default User' };
+          isAuthenticated.value = true;
+          
+          // Force immediate save to localStorage
+          if (process.client) {
+            localStorage.setItem(TOKEN_KEY, responseToken);
+            console.log('Token saved to localStorage:', localStorage.getItem(TOKEN_KEY) ? 'Successfully saved' : 'Failed to save');
+            
+            if (user.value) {
+              localStorage.setItem(USER_KEY, JSON.stringify(user.value));
+              console.log('User saved to localStorage');
+            }
+          }
+          
+          console.log('User authenticated via API successfully');
+          
+          // Navigate to dashboard page instead of home
+          router.push('/dashboard');
+        } else {
+          console.error('No token found in response:', response.data);
+          error.value = 'Invalid response from server';
+        }
       }
     } catch (err: any) {
       console.error('Unexpected error during login:', err);
@@ -190,18 +233,63 @@ export function useAuth() {
     try {
       const response = await authService.oauthLogin(provider, code);
       
+      console.log('OAuth API response:', response);
+      
       if (response.error) {
         error.value = response.error;
         return;
       }
       
-      if (response.data) {
-        token.value = response.data.token;
-        user.value = response.data.user;
-        isAuthenticated.value = true;
+      // Handle case where token might be at the root level of response
+      if (response.data && typeof response.data === 'object') {
+        console.log('OAuth response data:', JSON.stringify(response.data));
         
-        // Navigate to dashboard page instead of home
-        router.push('/dashboard');
+        // Try to extract token from different possible locations
+        let responseToken = null;
+        let userData = null;
+        
+        // Case 1: Our expected format with data.token or data.access_token
+        if (response.data.token || response.data.access_token) {
+          responseToken = response.data.access_token || response.data.token;
+          userData = response.data.user;
+        } 
+        // Case 2: Token directly in response.data (if data itself is the token)
+        else if (typeof response.data === 'string' && (response.data as string).length > 20) {
+          responseToken = response.data as string;
+          userData = { email: 'oauth@user.com', name: 'OAuth User' };
+        }
+        // Case 3: Response might have access_token at the root level
+        else if (response.data.access_token && !response.data.user) {
+          responseToken = response.data.access_token;
+          userData = { email: 'oauth@user.com', name: 'OAuth User' };
+        }
+        
+        console.log('Extracted token:', responseToken ? `${responseToken.substring(0, 10)}...` : 'No token found');
+        
+        if (responseToken) {
+          token.value = responseToken;
+          user.value = userData || { email: 'user@example.com', name: 'Default User' };
+          isAuthenticated.value = true;
+          
+          // Force immediate save to localStorage
+          if (process.client) {
+            localStorage.setItem(TOKEN_KEY, responseToken);
+            console.log('Token saved to localStorage:', localStorage.getItem(TOKEN_KEY) ? 'Successfully saved' : 'Failed to save');
+            
+            if (user.value) {
+              localStorage.setItem(USER_KEY, JSON.stringify(user.value));
+              console.log('User saved to localStorage');
+            }
+          }
+          
+          console.log('User authenticated via OAuth successfully');
+          
+          // Navigate to dashboard page instead of home
+          router.push('/dashboard');
+        } else {
+          console.error('No token found in response:', response.data);
+          error.value = 'Invalid response from server';
+        }
       }
     } catch (err: any) {
       error.value = err.message || `${provider} login failed`;
@@ -274,6 +362,45 @@ export function useAuth() {
     }
   };
 
+  // Add a debug function to manually store and retrieve tokens
+  const debugLocalStorage = () => {
+    if (process.client) {
+      try {
+        // Test if localStorage is working
+        const testKey = 'debug_test_key';
+        const testValue = `test_value_${Date.now()}`;
+        
+        // Try to store a test value
+        localStorage.setItem(testKey, testValue);
+        const retrievedValue = localStorage.getItem(testKey);
+        
+        console.log('LocalStorage test:', {
+          stored: testValue,
+          retrieved: retrievedValue,
+          success: testValue === retrievedValue
+        });
+        
+        // Remove test value
+        localStorage.removeItem(testKey);
+        
+        // Check current auth token
+        const currentToken = localStorage.getItem(TOKEN_KEY);
+        console.log('Current auth token in localStorage:', currentToken ? `${currentToken.substring(0, 10)}...` : 'No token found');
+        
+        return testValue === retrievedValue;
+      } catch (e) {
+        console.error('LocalStorage test failed:', e);
+        return false;
+      }
+    }
+    return false;
+  };
+  
+  // Test localStorage immediately
+  if (process.client) {
+    debugLocalStorage();
+  }
+
   return {
     isAuthenticated,
     isLoading,
@@ -288,6 +415,7 @@ export function useAuth() {
     loginWithTwitter,
     logout,
     resetPassword,
-    initAuth
+    initAuth,
+    debugLocalStorage
   };
 } 

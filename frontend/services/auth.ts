@@ -4,7 +4,8 @@ import { LoginCredentials, SignupCredentials, User } from '@/composables/useAuth
 // Auth service response types
 export interface AuthResponse {
   user: User;
-  token: string;
+  token?: string;
+  access_token?: string;
 }
 
 /**
@@ -14,12 +15,26 @@ export const useAuthService = () => {
   const api = useApi();
 
   // Login with email and password
-  const login = (credentials: LoginCredentials) => 
-    api.post<AuthResponse>('/auth/login', credentials);
+  const login = async (credentials: LoginCredentials) => {
+    console.log('Login request with:', { email: credentials.email });
+    const response = await api.post<AuthResponse>('/auth/login', credentials);
+    
+    // Debug the response structure
+    if (response.data) {
+      console.log('Login response structure:', {
+        hasAccessToken: !!response.data.access_token,
+        hasToken: !!response.data.token,
+        hasUser: !!response.data.user,
+        rawResponse: JSON.stringify(response.data)
+      });
+    }
+    
+    return response;
+  };
 
   // Register a new user
   const register = (userData: SignupCredentials) => 
-    api.post<AuthResponse>('/auth/register', userData);
+    api.post<AuthResponse>('/auth/signup', userData);
 
   // OAuth login/signup
   const oauthLogin = (provider: string, code: string) => 
