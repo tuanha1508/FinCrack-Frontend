@@ -9,12 +9,12 @@
         <!-- Bank recommendations list -->
         <div v-for="(bank, index) in recommendedBanks" :key="index" class="flex items-start p-3 rounded-lg border bg-card hover:bg-accent/10 transition-colors">
           <div class="h-10 w-10 rounded-md bg-primary/10 text-primary flex items-center justify-center mr-4 flex-shrink-0">
-            <Icon :name="bank.icon" class="h-5 w-5" />
+            <img :src="`/icons/${bank.icon}.svg`" class="h-5 w-5" alt="Bank icon" />
           </div>
           <div class="flex-1">
             <div class="flex items-center justify-between mb-1">
               <h4 class="font-medium text-foreground">{{ bank.name }}</h4>
-              <UiBadge variant="outline" class="text-xs">{{ bank.rating }}/5</UiBadge>
+              <UiBadge variant="outline" class="text-xs">{{ bank.digitalRating }}/5</UiBadge>
             </div>
             <p class="text-sm text-muted-foreground mb-2">{{ bank.description }}</p>
             <div class="flex flex-wrap gap-2">
@@ -24,10 +24,10 @@
             </div>
             <div class="mt-3 flex justify-between items-center">
               <UiBadge variant="default" class="text-xs">
-                {{ bank.accountType }}
+                {{ bank.type }}
               </UiBadge>
               <a 
-                :href="bank.url" 
+                :href="bank.website" 
                 target="_blank"
                 class="text-xs text-primary flex items-center hover:underline"
               >
@@ -52,46 +52,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { useBankRecommendations, type Bank } from '@/composables/useBankRecommendations';
 
-// Define bank interface
-interface Bank {
-  name: string;
-  icon: string;
-  description: string;
-  features: string[];
-  rating: number;
-  accountType: string;
-  url: string;
-}
-
-// Sample data - in a real application, this would come from an API
-const recommendedBanks = ref<Bank[]>([
-  {
-    name: 'Digital First Bank',
-    icon: 'lucide:landmark',
-    description: 'High-yield savings with no fees and excellent mobile experience',
-    features: ['No Fees', 'High APY', 'Mobile Banking'],
-    rating: 4.8,
-    accountType: 'Savings',
-    url: '#'
-  },
-  {
-    name: 'Investment Capital',
-    icon: 'lucide:building',
-    description: 'Premium checking with investment integration and cash back',
-    features: ['Cash Back', 'Investment Tools', 'Premium Service'],
-    rating: 4.5,
-    accountType: 'Checking',
-    url: '#'
-  },
-  {
-    name: 'Future Planning Credit Union',
-    icon: 'lucide:wallet',
-    description: 'Low-rate loans and excellent customer service for all your needs',
-    features: ['Low Rates', 'Credit Builder', 'Financial Planning'],
-    rating: 4.6,
-    accountType: 'Loans',
-    url: '#'
-  }
-]);
+// Get bank recommendations from the composable
+const { recommendedBanks } = useBankRecommendations();
 </script> 

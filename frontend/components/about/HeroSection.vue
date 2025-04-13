@@ -20,7 +20,7 @@
             <a href="#" class="text-xs group relative inline-block" :class="isDark ? 'text-white' : 'text-black'">
               See Demo 
               <span class="ml-1 group-hover:translate-x-1 transition-transform inline-block">→</span>
-              <span class="absolute left-1/2 -translate-x-1/2 bottom-0 h-px w-0 transition-all duration-300 group-hover:w-full rounded-full"
+              <span class="absolute left-0 bottom-0 h-px w-0 transition-all duration-300 group-hover:w-full rounded-full"
                     :class="isDark ? 'bg-white' : 'bg-black'"></span>
             </a>
           </div>

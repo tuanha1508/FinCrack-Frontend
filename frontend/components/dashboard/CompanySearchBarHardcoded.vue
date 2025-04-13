@@ -9,14 +9,16 @@
         @keyup.enter="handleSearch"
         @focus="searchQuery.length > 1 && (showSuggestions = true)"
       />
-      <Icon 
-        name="lucide:search" 
-        class="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-5 h-5" 
-      />
+      <div class="absolute left-3 top-0 h-full flex items-center pointer-events-none">
+        <Icon 
+          name="lucide:search" 
+          class="text-muted-foreground w-5 h-5" 
+        />
+      </div>
       <button 
         v-if="searchQuery" 
         @click="clearSearch"
-        class="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground hover:text-foreground"
+        class="absolute right-3 top-0 h-full flex items-center"
       >
         <Icon name="lucide:x" class="w-5 h-5" />
       </button>

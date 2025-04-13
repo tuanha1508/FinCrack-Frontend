@@ -6,7 +6,7 @@
         <div class="flex items-center justify-between mb-4">
           <div class="flex items-center">
             <div class="h-12 w-12 rounded-md bg-primary/10 text-primary flex items-center justify-center mr-4">
-              <Icon :name="bank.icon" class="h-6 w-6" />
+              <img :src="`/icons/${bank.icon}.svg`" class="h-6 w-6" alt="Bank icon" />
             </div>
             <div>
               <h2 class="text-xl font-bold text-foreground">{{ bank.name }}</h2>
@@ -64,9 +64,15 @@
           </div>
           <div>
             <p class="text-xs text-muted-foreground">Sustainability Rating</p>
-            <div class="flex">
-              <Icon v-for="i in 5" :key="i" :name="i <= bank.sustainabilityRating ? 'lucide:leaf' : 'lucide:leaf-off'" 
-                class="h-4 w-4" :class="i <= bank.sustainabilityRating ? 'text-green-500' : 'text-gray-300'" />
+            <div class="flex flex-wrap mt-1">
+              <span 
+                v-for="i in 5" 
+                :key="i" 
+                class="h-4 w-4 mr-1 flex items-center justify-center"
+                :class="i <= bank.sustainabilityRating ? 'text-green-500' : 'text-gray-300'"
+              >
+                🍃
+              </span>
             </div>
           </div>
         </div>

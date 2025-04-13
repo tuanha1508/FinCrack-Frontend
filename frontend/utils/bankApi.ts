@@ -34,7 +34,9 @@ export interface BankRecommendationRequest {
  */
 export async function fetchBankRecommendations(requestData: BankRecommendationRequest) {
   try {
-    const response = await fetch('/api/banks/recommendation', {
+    console.log(`Making fetch request to http://localhost:3000/api/banks/recommendation`);
+    
+    const response = await fetch('http://localhost:3000/api/banks/recommendation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -42,14 +44,25 @@ export async function fetchBankRecommendations(requestData: BankRecommendationRe
       body: JSON.stringify(requestData),
     });
     
+    console.log(`Received response with status: ${response.status}`);
+    
     if (!response.ok) {
-      const errorData = await response.json();
-      throw new Error(errorData.error || `Request failed with status ${response.status}`);
+      console.error(`Response not OK: ${response.status} ${response.statusText}`);
+      try {
+        const errorData = await response.json();
+        console.error('Error response body:', errorData);
+        throw new Error(errorData.error || `Request failed with status ${response.status}`);
+      } catch (jsonError) {
+        // If we can't parse the error as JSON, use status text
+        throw new Error(`Request failed with status ${response.status}: ${response.statusText}`);
+      }
     }
     
-    return await response.json();
+    const data = await response.json();
+    console.log('Parsed JSON response data:', data);
+    return data;
   } catch (error) {
-    console.error('Error fetching bank recommendations:', error);
+    console.error('Error in fetchBankRecommendations:', error);
     throw error;
   }
 }

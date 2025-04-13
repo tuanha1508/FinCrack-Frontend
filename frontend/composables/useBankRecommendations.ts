@@ -26,6 +26,26 @@ export interface Bank {
   reasons: string[];
 }
 
+// Map bank names to their icon identifiers
+const BANK_ICON_MAP: Record<string, string> = {
+  'Chase': 'chase',
+  'Bank of America': 'bank-of-america',
+  'Wells Fargo': 'wells-fargo',
+  'Capital One': 'capital-one',
+  'Citibank': 'citibank'
+};
+
+// Get icon identifier for a bank name
+const getBankIconId = (bankName: string): string => {
+  // Check if we have a predefined icon for this bank
+  const normalizedName = bankName.trim();
+  if (normalizedName in BANK_ICON_MAP) {
+    return BANK_ICON_MAP[normalizedName];
+  }
+  // Fallback to the dynamic conversion for other banks
+  return bankName.toLowerCase().replace(/\s+/g, '-');
+};
+
 export function useBankRecommendations() {
   // Recommended banks data
   const recommendedBanks = ref<Bank[]>([]);
@@ -37,19 +57,62 @@ export function useBankRecommendations() {
     isLoading.value = true;
     error.value = null;
     
+    console.log('Fetching bank recommendations with data:', requestData);
+    
     try {
       const data = await fetchBankRecommendations(requestData);
       
+      console.log('Received API response:', data);
+      
       if (data.success && data.recommendations) {
-        recommendedBanks.value = data.recommendations;
+        console.log('Found successful response with recommendations');
+        // Ensure each bank has the correct icon
+        recommendedBanks.value = data.recommendations.map((bank: Bank) => ({
+          ...bank,
+          icon: getBankIconId(bank.name)
+        }));
+        console.log('Updated recommendedBanks with data');
+      } else if (data.recommended_bank) {
+        // Handle the alternative API response format
+        console.log('Found alternative API response format with recommended_bank');
+        const bankName = data.recommended_bank;
+        
+        const bank: Bank = {
+          name: bankName,
+          type: "Commercial",
+          icon: getBankIconId(bankName),
+          matchScore: 95,
+          description: data.description || "",
+          website: data.website || "",
+          features: [],
+          services: [],
+          digitalRating: 4,
+          branchCount: "3,500+",
+          feeLevel: "Medium",
+          sustainabilityRating: 3,
+          matchBreakdown: {
+            digitalBanking: 90,
+            serviceOfferings: 95,
+            feeStructure: 85,
+            branchNetwork: 100,
+            customerSupport: 90
+          },
+          reasons: [
+            "Strong digital banking services",
+            "Extensive branch network",
+            "Comprehensive financial products"
+          ]
+        };
+        recommendedBanks.value = [bank];
+        console.log('Updated recommendedBanks with formatted data');
       } else {
+        console.error('API response missing success or recommendations:', data);
         throw new Error(data.error || 'Failed to fetch recommendations');
       }
     } catch (err) {
       console.error('Error fetching bank recommendations:', err);
       error.value = err instanceof Error ? err.message : 'An unknown error occurred';
-      // Provide fallback data in case of error
-      recommendedBanks.value = getDefaultBanks();
+      recommendedBanks.value = [];
     } finally {
       isLoading.value = false;
     }
@@ -61,96 +124,6 @@ export function useBankRecommendations() {
     const requestData = formatBankRequestData(formData);
     await fetchRecommendations(requestData);
   };
-
-  // Get default banks (fallback data)
-  const getDefaultBanks = (): Bank[] => {
-    return [
-      {
-        name: 'GreenBank Plus',
-        type: 'Digital Bank',
-        icon: 'lucide:building-bank',
-        matchScore: 92,
-        description: 'A digital-first bank with a strong focus on environmental initiatives and competitive rates for professionals.',
-        website: 'https://example.com/greenbank',
-        features: ['Mobile Banking', '24/7 Support', 'Sustainable Investments', 'High-Interest Savings'],
-        services: ['Savings Accounts', 'Credit Cards', 'Personal Loans', 'Investment Services'],
-        digitalRating: 5,
-        branchCount: '150+ locations',
-        feeLevel: 'Low',
-        sustainabilityRating: 5,
-        matchBreakdown: {
-          digitalBanking: 98,
-          serviceOfferings: 90,
-          feeStructure: 85,
-          branchNetwork: 75,
-          customerSupport: 95
-        },
-        reasons: [
-          'Excellent digital interface matching your high preference',
-          'Strong focus on green initiatives aligns with your values',
-          'Low fee structure matches your preferences',
-          'Offers all the banking services you selected'
-        ]
-      },
-      {
-        name: 'TechFi Banking',
-        type: 'Online Bank',
-        icon: 'lucide:smartphone',
-        matchScore: 87,
-        description: 'A technology-focused online bank offering innovative financial products with competitive rates and minimal fees.',
-        website: 'https://example.com/techfi',
-        features: ['AI Financial Assistant', 'Integrated Budgeting', 'Instant Transfers', 'Virtual Cards'],
-        services: ['Checking Accounts', 'Savings Accounts', 'Credit Cards', 'Investment Solutions'],
-        digitalRating: 5,
-        branchCount: '0 (Online Only)',
-        feeLevel: 'Very Low',
-        sustainabilityRating: 3,
-        matchBreakdown: {
-          digitalBanking: 100,
-          serviceOfferings: 85,
-          feeStructure: 95,
-          branchNetwork: 20,
-          customerSupport: 90
-        },
-        reasons: [
-          'Industry-leading digital interface (perfect for tech-savvy users)',
-          'Very low fee structure aligns with your preferences',
-          'Strong focus on innovative financial tools',
-          'Excellent option for professionals looking for integrated services'
-        ]
-      },
-      {
-        name: 'National Trust Bank',
-        type: 'Traditional Bank',
-        icon: 'lucide:landmark',
-        matchScore: 79,
-        description: 'A well-established traditional bank with a large branch network and comprehensive services for all customer types.',
-        website: 'https://example.com/nationaltrust',
-        features: ['Extensive Branch Network', 'Financial Advisors', 'Business Services', 'Wealth Management'],
-        services: ['Checking & Savings', 'Investment Services', 'Personal Loans', 'Credit Cards'],
-        digitalRating: 3,
-        branchCount: '3,200+ locations',
-        feeLevel: 'Medium',
-        sustainabilityRating: 2,
-        matchBreakdown: {
-          digitalBanking: 60,
-          serviceOfferings: 90,
-          feeStructure: 70,
-          branchNetwork: 95,
-          customerSupport: 85
-        },
-        reasons: [
-          'Large branch network closely matches your preference',
-          'Comprehensive service offerings cover all your needs',
-          'Strong customer service focus matches your high ranking',
-          'Well-established financial stability for peace of mind'
-        ]
-      }
-    ];
-  };
-
-  // Initialize with default data
-  recommendedBanks.value = getDefaultBanks();
 
   return {
     recommendedBanks,

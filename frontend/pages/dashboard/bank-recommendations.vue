@@ -11,10 +11,6 @@
           <Icon name="lucide:chevron-left" class="h-4 w-4" />
           Back to Form
         </UiButton>
-        <UiButton variant="outline" size="sm" class="gap-2" @click="refreshRecommendations">
-          <Icon name="lucide:refresh-cw" class="h-4 w-4" />
-          Refresh
-        </UiButton>
       </div>
     </div>
 
@@ -51,14 +47,32 @@
         :formatLabel="formatLabel" 
       />
 
-      <!-- Match score explanation -->
-      <div class="rounded-lg bg-muted/40 p-4 mb-6 flex items-center">
-        <Icon name="lucide:info" class="h-5 w-5 text-primary mr-3 flex-shrink-0" />
-        <p class="text-sm">Our matching algorithm considers your preferences for banking features, services needed, and customer profile to calculate a match score. Banks with higher scores align better with your requirements.</p>
+      <!-- Loading state -->
+      <div v-if="isLoading" class="p-8 text-center">
+        <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4"></div>
+        <p>Loading your personalized bank recommendations...</p>
+      </div>
+
+      <!-- Error state -->
+      <div v-else-if="error" class="rounded-lg bg-destructive/10 p-4 mb-6">
+        <h3 class="text-lg font-medium text-destructive mb-2">Error Loading Recommendations</h3>
+        <p class="text-sm mb-2">{{ error }}</p>
+        <UiButton variant="outline" size="sm" @click="resetForm">
+          <Icon name="lucide:chevron-left" class="h-4 w-4 mr-2" />
+          Back to Form
+        </UiButton>
+      </div>
+
+      <!-- Empty state -->
+      <div v-else-if="!recommendedBanks || recommendedBanks.length === 0" class="rounded-lg bg-muted p-8 text-center mb-6">
+        <Icon name="lucide:database" class="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+        <h3 class="text-lg font-medium mb-2">No Recommendations Found</h3>
+        <p class="text-sm text-muted-foreground mb-4">We couldn't find any bank recommendations that match your preferences.</p>
+        <UiButton variant="outline" @click="resetForm">Modify Preferences</UiButton>
       </div>
 
       <!-- Bank recommendations list -->
-      <div class="space-y-6">
+      <div v-else class="space-y-6">
         <BankCard v-for="(bank, index) in recommendedBanks" :key="index" :bank="bank" />
       </div>
     </div>
@@ -128,12 +142,6 @@ const submitForm = async () => {
   showResults.value = true;
   
   // Format the data for the API and fetch recommendations
-  const requestData = formatBankRequestData(formData.value);
-  await fetchRecommendations(requestData);
-};
-
-// Refresh recommendations function for the refresh button
-const refreshRecommendations = async () => {
   const requestData = formatBankRequestData(formData.value);
   await fetchRecommendations(requestData);
 };

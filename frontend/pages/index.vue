@@ -3,7 +3,7 @@
     <!-- Hero section with large brand name -->
     <section class="container mx-auto px-4 h-screen flex flex-col items-center justify-center relative">
       <!-- Simplified masked animation text with video background -->
-      <div class="relative flex items-center justify-center w-full max-w-6xl mx-auto overflow-hidden h-[200px] sm:h-[250px] md:h-[300px] lg:h-[350px] xl:h-[400px]">
+      <div class="relative flex items-center justify-center w-full max-w-6xl mx-auto overflow-hidden h-[200px] sm:h-[250px] md:h-[300px] lg:h-[350px] xl:h-[400px] 2xl:h-[450px]">
         <!-- SVG text mask with responsive viewBox -->
         <svg class="absolute inset-0 w-full h-full z-10 svg-responsive" 
              preserveAspectRatio="xMidYMid meet" 
@@ -60,7 +60,7 @@
                      ]">
           <div class="relative inline-block">
             See what we have now
-            <span class="absolute h-0.5 w-0 left-1/2 -translate-x-1/2 bottom-0 group-hover:w-full transition-all duration-300 ease-in-out rounded-full"
+            <span class="absolute h-0.5 w-0 left-0 bottom-0 group-hover:w-full transition-all duration-300 ease-in-out rounded-full"
                   :class="isDark ? 'bg-white' : 'bg-black'"></span>
           </div>
           <span class="ml-2 arrow-icon">→</span>
@@ -222,6 +222,20 @@ onMounted(() => {
   }
 }
 
+/* XXL devices (wide screens) */
+@media (min-width: 1900px) {
+  .svg-title-text {
+    font-size: 350px;
+  }
+}
+
+/* Ultra wide screens */
+@media (min-width: 2400px) {
+  .svg-title-text {
+    font-size: 400px;
+  }
+}
+
 /* Apply responsive viewBox based on screen size using media queries */
 .svg-responsive {
   /* Mobile viewBox (default) */
@@ -253,6 +267,20 @@ onMounted(() => {
 @media (min-width: 1200px) {
   .svg-responsive {
     viewBox: 0 0 700 100;
+  }
+}
+
+/* XXL devices (wide screens) */
+@media (min-width: 1900px) {
+  .svg-responsive {
+    viewBox: 0 0 900 120;
+  }
+}
+
+/* Ultra wide screens */
+@media (min-width: 2400px) {
+  .svg-responsive {
+    viewBox: 0 0 1200 150;
   }
 }
 
