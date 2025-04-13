@@ -9,34 +9,65 @@
       </div>
       
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-16">
-        <!-- Demo Feature 1: Analytics Visualization -->
+        <!-- Demo Feature 1: Dashboard Preview -->
         <div class="flex flex-col">
           <div class="rounded-xl overflow-hidden mb-8 h-[550px] flex flex-col transition-all duration-300 hover:translate-y-[-4px]" 
                :class="isDark ? 'bg-black border border-white/20 shadow-[0_0_35px_rgba(255,255,255,0.08)]' : 'bg-white border border-black/10 shadow-[0_10px_40px_rgba(0,0,0,0.1)]'">
-            <!-- Header section -->
+            <!-- Dashboard Header section -->
             <div class="p-4 border-b" :class="isDark ? 'border-white/10' : 'border-black/10'">
               <div class="flex items-center justify-between">
-                <h3 class="font-bold text-base" :class="isDark ? 'text-white' : 'text-black'">Financial Analytics Dashboard</h3>
+                <h3 class="font-bold text-base" :class="isDark ? 'text-white' : 'text-black'">Financial Dashboard</h3>
                 <div class="flex space-x-2">
-                  <div class="w-3 h-3 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
-                  <div class="w-3 h-3 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
-                  <div class="w-3 h-3 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
+                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
               </div>
             </div>
 
-            <!-- Main content - Only chart -->
-            <div class="p-6 flex-1 flex flex-col">
-              <div class="flex-1 flex flex-col">
-                <!-- Chart title -->
-                <div class="flex justify-between items-center mb-4">
-                  <h4 class="text-base font-medium" :class="isDark ? 'text-white' : 'text-black'">Monthly Spending Breakdown</h4>
-                  <span class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">Last 30 days</span>
+            <!-- Dashboard Content -->
+            <div class="p-4 flex-1 overflow-y-auto">
+              <!-- Company Summary Section -->
+              <div class="mb-4 p-3 rounded-lg" :class="isDark ? 'bg-white/5' : 'bg-black/5'">
+                <div class="flex items-center gap-3 mb-2">
+                  <div class="w-10 h-10 rounded-lg flex items-center justify-center" :class="isDark ? 'bg-white/10' : 'bg-black/10'">
+                    <Icon name="lucide:briefcase" class="w-5 h-5" :class="isDark ? 'text-white' : 'text-black'" />
+                  </div>
+                  <div>
+                    <h4 class="font-medium text-sm" :class="isDark ? 'text-white' : 'text-black'">Apple Inc. (AAPL)</h4>
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">NASDAQ • USD</p>
+                  </div>
+                </div>
+                
+                <div class="grid grid-cols-3 gap-2 mt-3">
+                  <div class="p-2 rounded" :class="isDark ? 'bg-white/10' : 'bg-black/10'">
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">Price</p>
+                    <p class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">$174.79</p>
+                  </div>
+                  <div class="p-2 rounded" :class="isDark ? 'bg-white/10' : 'bg-black/10'">
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">Change</p>
+                    <p class="text-sm font-medium text-green-500">+2.4%</p>
+                  </div>
+                  <div class="p-2 rounded" :class="isDark ? 'bg-white/10' : 'bg-black/10'">
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">Volume</p>
+                    <p class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">58.3M</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Financial Chart -->
+              <div class="mb-4 p-3 rounded-lg" :class="isDark ? 'bg-white/5' : 'bg-black/5'">
+                <div class="flex justify-between items-center mb-2">
+                  <h4 class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">Performance</h4>
+                  <div class="flex gap-2">
+                    <span class="text-xs py-1 px-2 rounded-full cursor-pointer" :class="isDark ? 'bg-white/10 text-white' : 'bg-black/10 text-black'">1D</span>
+                    <span class="text-xs py-1 px-2 rounded-full cursor-pointer" :class="isDark ? 'bg-white/20 text-white' : 'bg-black/20 text-black'">1W</span>
+                    <span class="text-xs py-1 px-2 rounded-full cursor-pointer" :class="isDark ? 'bg-white/10 text-white' : 'bg-black/10 text-black'">1M</span>
+                  </div>
                 </div>
                 
                 <!-- Chart visualization -->
-                <div class="flex-1 rounded-xl overflow-hidden p-4" :class="isDark ? 'bg-black/90 border border-white/10' : 'bg-black/5'">
-                  <!-- Chart implementation with correct props -->
+                <div class="h-32 rounded-md overflow-hidden">
                   <Chart 
                     type="line" 
                     :series="chartSeries"
@@ -46,10 +77,47 @@
                   />
                 </div>
               </div>
+              
+              <!-- Financial Metrics -->
+              <div class="mb-4">
+                <h4 class="text-sm font-medium mb-2" :class="isDark ? 'text-white' : 'text-black'">Key Metrics</h4>
+                <div class="grid grid-cols-2 gap-2">
+                  <div class="p-3 rounded-lg" :class="isDark ? 'bg-white/5' : 'bg-black/5'">
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">Market Cap</p>
+                    <p class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">$2.75T</p>
+                  </div>
+                  <div class="p-3 rounded-lg" :class="isDark ? 'bg-white/5' : 'bg-black/5'">
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">P/E Ratio</p>
+                    <p class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">28.91</p>
+                  </div>
+                  <div class="p-3 rounded-lg" :class="isDark ? 'bg-white/5' : 'bg-black/5'">
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">Revenue (TTM)</p>
+                    <p class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">$394.33B</p>
+                  </div>
+                  <div class="p-3 rounded-lg" :class="isDark ? 'bg-white/5' : 'bg-black/5'">
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">Dividend Yield</p>
+                    <p class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">0.53%</p>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Recommendations Section -->
+              <div class="mb-4">
+                <h4 class="text-sm font-medium mb-2" :class="isDark ? 'text-white' : 'text-black'">Recommendations</h4>
+                <div class="p-3 rounded-lg flex items-center gap-3" :class="isDark ? 'bg-white/5' : 'bg-black/5'">
+                  <div class="w-8 h-8 rounded-full flex items-center justify-center bg-green-100">
+                    <Icon name="lucide:trending-up" class="w-4 h-4 text-green-600" />
+                  </div>
+                  <div class="flex-1">
+                    <p class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">Buy recommendation</p>
+                    <p class="text-xs opacity-70" :class="isDark ? 'text-white' : 'text-black'">Strong growth potential in services segment</p>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <p class="text-base text-center px-4" :class="isDark ? 'text-white/80' : 'text-black/80'">
-            Visualize your spending patterns and identify opportunities to save with intuitive charts.
+            Access comprehensive financial data and personalized recommendations in one intuitive dashboard.
           </p>
         </div>
         
@@ -62,9 +130,9 @@
               <div class="flex items-center justify-between">
                 <h3 class="font-bold text-base" :class="isDark ? 'text-white' : 'text-black'">Virtual Financial Assistant</h3>
                 <div class="flex space-x-2">
-                  <div class="w-3 h-3 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
-                  <div class="w-3 h-3 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
-                  <div class="w-3 h-3 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
+                  <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                  <div class="w-3 h-3 rounded-full bg-green-500"></div>
                 </div>
               </div>
             </div>
@@ -74,7 +142,7 @@
               <!-- Chat messages container with improved styling -->
               <div class="flex-1 flex flex-col space-y-6 overflow-y-auto">
                 <!-- Bot message 1 -->
-                <div class="flex gap-4 items-start animate-fadeIn" style="--delay: 0.1s">
+                <div v-if="visibleMessagesCount >= 1" class="flex gap-4 items-start animate-fadeIn">
                   <div class="w-10 h-10 rounded-full flex items-center justify-center" :class="isDark ? 'bg-white' : 'bg-black'">
                     <Icon name="lucide:bot" class="w-5 h-5" :class="isDark ? 'text-black' : 'text-white'" />
                   </div>
@@ -87,7 +155,7 @@
                 </div>
                 
                 <!-- User message -->
-                <div class="flex gap-4 items-start justify-end animate-fadeIn" style="--delay: 0.3s">
+                <div v-if="visibleMessagesCount >= 2" class="flex gap-4 items-start justify-end animate-fadeIn">
                   <div class="p-4 rounded-lg max-w-[80%] shadow-sm" 
                        :class="isDark ? 'bg-white/20 border border-white/10' : 'bg-black border border-black/20'">
                     <p class="text-sm" :class="isDark ? 'text-white' : 'text-white'">
@@ -100,7 +168,7 @@
                 </div>
                 
                 <!-- Bot message 2 -->
-                <div class="flex gap-4 items-start animate-fadeIn" style="--delay: 0.5s">
+                <div v-if="visibleMessagesCount >= 3" class="flex gap-4 items-start animate-fadeIn">
                   <div class="w-10 h-10 rounded-full flex items-center justify-center" :class="isDark ? 'bg-white' : 'bg-black'">
                     <Icon name="lucide:bot" class="w-5 h-5" :class="isDark ? 'text-black' : 'text-white'" />
                   </div>
@@ -144,11 +212,37 @@
 
 <script setup lang="ts">
 import { useTheme } from '@/composables/useTheme';
-import { computed } from 'vue';
+import { computed, ref, onMounted, onUnmounted } from 'vue';
 import Chart from '@/components/ui/chart/Chart.vue';
 
 // Get theme state
 const { isDark } = useTheme();
+
+// State for controlling message visibility
+const visibleMessagesCount = ref(0);
+const totalMessages = 3; // Total number of messages in the demo
+let messageInterval: NodeJS.Timeout | null = null;
+
+// Function to show messages sequentially
+const showMessages = () => {
+  if (visibleMessagesCount.value < totalMessages) {
+    visibleMessagesCount.value++;
+  } else {
+    // Optional: Reset or stop after all messages are shown
+    if (messageInterval) clearInterval(messageInterval);
+  }
+};
+
+// Start the interval when the component is mounted
+onMounted(() => {
+  visibleMessagesCount.value = 0; // Reset on mount
+  messageInterval = setInterval(showMessages, 1500); // Show a new message every 1.5 seconds
+});
+
+// Clear the interval when the component is unmounted
+onUnmounted(() => {
+  if (messageInterval) clearInterval(messageInterval);
+});
 
 // Define chart data with Neon Green color
 const chartSeries = computed(() => [

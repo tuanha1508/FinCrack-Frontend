@@ -27,16 +27,46 @@
             <div class="rounded-xl overflow-hidden shadow-lg" 
                  :class="isDark ? 'bg-black border border-white/20' : 'bg-white border border-black/10'">
               <div class="relative">
-                <!-- Dashboard preview image or mockup -->
-                <div class="aspect-video" 
-                     :class="isDark ? 'bg-white/5' : 'bg-black/5'">
-                  <div class="absolute inset-0 flex items-center justify-center">
-                    <div class="text-center">
-                      <Icon name="lucide:layout-dashboard" class="w-16 h-16 mx-auto mb-2" 
-                           :class="isDark ? 'text-white/70' : 'text-black/70'" />
-                      <p class="text-sm font-medium" :class="isDark ? 'text-white' : 'text-black'">
-                        Dashboard Preview
-                      </p>
+                <!-- Simplified Dashboard Mockup -->
+                <div class="aspect-video flex flex-col overflow-hidden" 
+                     :class="isDark ? 'bg-black' : 'bg-white'">
+                  <!-- Header -->
+                  <div class="h-4 px-2 flex items-center border-b" :class="isDark ? 'border-white/10' : 'border-black/10'">
+                    <div class="flex space-x-1">
+                      <div class="w-1.5 h-1.5 rounded-full bg-red-500"></div>
+                      <div class="w-1.5 h-1.5 rounded-full bg-yellow-500"></div>
+                      <div class="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                    </div>
+                  </div>
+                  <!-- Body with Sidebar & Content -->
+                  <div class="flex-1 flex">
+                    <!-- Sidebar -->
+                    <div class="w-8 border-r" :class="isDark ? 'bg-white/5 border-white/10' : 'bg-black/5 border-black/10'">
+                      <div class="h-4 w-4 mx-auto mt-2 rounded-full" :class="isDark ? 'bg-white/10' : 'bg-black/10'"></div>
+                      <div class="space-y-1.5 mt-2 px-1.5">
+                        <div class="h-1.5 w-full rounded-sm" :class="isDark ? 'bg-white/10' : 'bg-black/10'"></div>
+                        <div class="h-1.5 w-3/4 rounded-sm" :class="isDark ? 'bg-white/10' : 'bg-black/10'"></div>
+                        <div class="h-1.5 w-5/6 rounded-sm" :class="isDark ? 'bg-white/10' : 'bg-black/10'"></div>
+                      </div>
+                    </div>
+                    <!-- Main Content Area -->
+                    <div class="flex-1 p-2 space-y-2">
+                      <!-- Small Chart Placeholder -->
+                      <div class="h-6 rounded border" :class="isDark ? 'border-white/10' : 'border-black/10'">
+                        <!-- Very simple line representation -->
+                        <svg viewBox="0 0 50 10" class="w-full h-full">
+                          <polyline points="2,8 10,3 20,6 30,4 40,7 48,5" 
+                                    :stroke="isDark ? '#39FF14' : '#10B981'" 
+                                    fill="none" stroke-width="0.5" />
+                        </svg>
+                      </div>
+                      <!-- Data Blocks -->
+                      <div class="grid grid-cols-2 gap-1">
+                        <div class="h-4 rounded" :class="isDark ? 'bg-white/10' : 'bg-black/10'"></div>
+                        <div class="h-4 rounded" :class="isDark ? 'bg-white/10' : 'bg-black/10'"></div>
+                        <div class="h-4 rounded" :class="isDark ? 'bg-white/10' : 'bg-black/10'"></div>
+                        <div class="h-4 rounded" :class="isDark ? 'bg-white/10' : 'bg-black/10'"></div>
+                      </div>
                     </div>
                   </div>
                 </div>

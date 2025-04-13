@@ -6,8 +6,15 @@
       <div class="flex flex-col lg:flex-row items-center gap-10">
         <div class="lg:w-1/2 space-y-5">
           <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold leading-tight" :class="isDark ? 'text-white' : 'text-black'">
-            <span class="block">Your finances,</span>
-            <span class="bg-clip-text text-transparent" :class="isDark ? 'bg-gradient-to-r from-white to-white' : 'bg-gradient-to-r from-black to-black'">reimagined.</span>
+            <span class="block">Finance Simplified</span>
+            <span class="bg-clip-text text-transparent animate-gradient relative" 
+                  :class="isDark ? 'bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600' : 
+                  'bg-gradient-to-r from-blue-600 via-indigo-700 to-purple-800'">
+              Success Amplified
+              <span class="absolute -bottom-1 left-0 w-full h-0.5 animate-pulse rounded-full"
+                    :class="isDark ? 'bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-600' : 
+                    'bg-gradient-to-r from-blue-600 via-indigo-700 to-purple-800'"></span>
+            </span>
           </h1>
           <p class="text-base max-w-lg" :class="isDark ? 'text-white' : 'text-black'">
             Manage your investments, track performance, and make smarter financial decisions with our modern platform.
@@ -31,9 +38,9 @@
           <div class="rounded-t-xl border-b p-3" 
                :class="isDark ? 'bg-black border-white' : 'bg-white border-gray-300'">
             <div class="flex space-x-2">
-              <div class="w-2.5 h-2.5 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
-              <div class="w-2.5 h-2.5 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
-              <div class="w-2.5 h-2.5 rounded-full" :class="isDark ? 'bg-white' : 'bg-black'"></div>
+              <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
+              <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
+              <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
             </div>
           </div>
           <div class="p-5 overflow-hidden" :class="isDark ? 'bg-black' : 'bg-white'">
@@ -78,4 +85,23 @@ import { useTheme } from '@/composables/useTheme';
 
 // Get theme state
 const { isDark } = useTheme();
-</script> 
+</script>
+
+<style scoped>
+@keyframes gradient {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.animate-gradient {
+  background-size: 200% 200%;
+  animation: gradient 3s ease infinite;
+}
+</style> 
