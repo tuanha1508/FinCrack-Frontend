@@ -35,9 +35,9 @@
         </div>
         <p class="text-muted-foreground">{{ displayInfo }}</p>
       </div>
-      <UiButton size="sm" class="gap-2">
-        <Icon name="lucide:heart" class="h-4 w-4" />
-        Add to Watchlist
+      <UiButton size="sm" class="gap-2" @click="toggleCompanyWishlist">
+        <Icon name="lucide:heart" class="h-4 w-4" :class="{'text-rose-500': isWishlisted, 'text-muted-foreground': !isWishlisted}" />
+        {{ isWishlisted ? 'Remove from Watchlist' : 'Add to Watchlist' }}
       </UiButton>
     </div>
 
@@ -142,6 +142,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, computed } from 'vue';
 import { Chart, ChartItem, registerables } from 'chart.js';
+import { useWishlistStore } from '@/stores/wishlistStore';
 
 // Register Chart.js components
 Chart.register(...registerables);
@@ -184,6 +185,21 @@ const props = defineProps({
     default: null
   }
 });
+
+// Use the wishlist store
+const wishlistStore = useWishlistStore();
+
+// Computed property to check if the current company is in the wishlist
+const isWishlisted = computed(() => {
+  return props.company ? wishlistStore.isInWishlist(props.company.symbol) : false;
+});
+
+// Function to handle toggling wishlist status
+const toggleCompanyWishlist = () => {
+  if (props.company) {
+    wishlistStore.toggleWishlist(props.company.symbol);
+  }
+};
 
 // Chart references
 const priceChartCanvas = ref<HTMLCanvasElement | null>(null);

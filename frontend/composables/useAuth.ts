@@ -1,10 +1,11 @@
 import { ref, watchEffect } from 'vue';
-import { useRouter, useLocalStorage, useRuntimeConfig } from '#imports';
+import { useRouter, useLocalStorage, useRuntimeConfig, useCookie } from '#imports';
 import { useAuthService } from '@/services/auth';
 
 export interface LoginCredentials {
   email: string;
   password: string;
+  name?: string;  // Optional for cases where we need to reference it
 }
 
 export interface SignupCredentials {
@@ -33,7 +34,7 @@ export function useAuth() {
   const router = useRouter();
   const authService = useAuthService();
   
-  // Initialize auth state from local storage
+  // Initialize auth state from local storage and cookies
   const initAuth = () => {
     // Skip on server
     if (process.server) return;
@@ -42,10 +43,36 @@ export function useAuth() {
     const storedToken = localStorage.getItem(TOKEN_KEY);
     const storedUser = localStorage.getItem(USER_KEY);
     
-    if (storedToken && storedUser) {
-      token.value = storedToken;
-      user.value = JSON.parse(storedUser);
+    // Also check cookies
+    const tokenCookie = useCookie('auth_token');
+    const userCookie = useCookie('auth_user');
+    
+    // Prefer localStorage over cookie, but use either
+    const finalToken = storedToken || tokenCookie.value;
+    const finalUser = storedUser ? JSON.parse(storedUser) : (userCookie.value ? JSON.parse(userCookie.value as string) : null);
+    
+    console.log('Auth initialization:', { 
+      hasLocalStorageToken: !!storedToken,
+      hasCookieToken: !!tokenCookie.value,
+      usingToken: !!finalToken
+    });
+    
+    if (finalToken && finalUser) {
+      token.value = finalToken;
+      user.value = finalUser;
       isAuthenticated.value = true;
+      
+      // Ensure both localStorage and cookie are in sync
+      if (!storedToken && finalToken) {
+        localStorage.setItem(TOKEN_KEY, finalToken);
+      }
+      if (!storedUser && finalUser) {
+        localStorage.setItem(USER_KEY, JSON.stringify(finalUser));
+      }
+      
+      console.log('User authenticated during initialization');
+    } else {
+      console.log('No valid authentication found during initialization');
     }
   };
   
@@ -54,14 +81,41 @@ export function useAuth() {
     initAuth();
   }
   
-  // Persist auth state to local storage
+  // Persist auth state to local storage and cookies
   const saveAuthState = () => {
     if (token.value && user.value) {
       localStorage.setItem(TOKEN_KEY, token.value);
       localStorage.setItem(USER_KEY, JSON.stringify(user.value));
+      
+      // Also store in cookie for SSR
+      const tokenCookie = useCookie('auth_token', {
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+        path: '/',
+        sameSite: 'lax'
+      });
+      tokenCookie.value = token.value;
+      
+      // Store user in cookie if needed
+      const userCookie = useCookie('auth_user', {
+        maxAge: 60 * 60 * 24 * 7, // 1 week
+        path: '/',
+        sameSite: 'lax'
+      });
+      userCookie.value = JSON.stringify(user.value);
+      
+      console.log('Auth state saved to localStorage and cookies');
     } else {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
+      
+      // Remove from cookies too
+      const tokenCookie = useCookie('auth_token');
+      tokenCookie.value = null;
+      
+      const userCookie = useCookie('auth_user');
+      userCookie.value = null;
+      
+      console.log('Auth state removed from localStorage and cookies');
     }
   };
   
@@ -154,27 +208,45 @@ export function useAuth() {
         if (response.data.token || response.data.access_token) {
           responseToken = response.data.access_token || response.data.token;
           userData = response.data.user;
+          console.log('Token found in response data.token or data.access_token');
         } 
         // Case 2: Token directly in response.data (if data itself is the token)
         else if (typeof response.data === 'string' && (response.data as string).length > 20) {
           responseToken = response.data as string;
           userData = { email: credentials.email, name: 'User' };
+          console.log('Token found directly in response.data as string');
         }
         // Case 3: Response might have access_token at the root level
         else if (response.data.access_token && !response.data.user) {
           responseToken = response.data.access_token;
           userData = { email: credentials.email, name: 'User' };
+          console.log('Token found in response.data.access_token without user data');
+        }
+        // Case 4: Other possible token locations
+        else if (response.data && typeof response.data === 'object') {
+          // Use type assertion to avoid TypeScript errors
+          const responseObj = response.data as Record<string, any>;
+          
+          if (responseObj.hasOwnProperty('data') && typeof responseObj.data === 'object') {
+            const nestedData = responseObj.data;
+            if (nestedData.token || nestedData.access_token) {
+              responseToken = nestedData.access_token || nestedData.token;
+              userData = nestedData.user || { email: credentials.email, name: credentials.name || 'User' };
+              console.log('Token found in nested response.data.data');
+            }
+          }
         }
         
         console.log('Extracted token:', responseToken ? `${responseToken.substring(0, 10)}...` : 'No token found');
         
         if (responseToken) {
           token.value = responseToken;
-          user.value = userData || { email: 'user@example.com', name: 'Default User' };
+          user.value = userData || { email: credentials.email, name: credentials.name || 'User' };
           isAuthenticated.value = true;
           
-          // Force immediate save to localStorage
+          // Force immediate save to localStorage and cookies
           if (process.client) {
+            // Save to localStorage
             localStorage.setItem(TOKEN_KEY, responseToken);
             console.log('Token saved to localStorage:', localStorage.getItem(TOKEN_KEY) ? 'Successfully saved' : 'Failed to save');
             
@@ -182,6 +254,24 @@ export function useAuth() {
               localStorage.setItem(USER_KEY, JSON.stringify(user.value));
               console.log('User saved to localStorage');
             }
+            
+            // Save to cookies
+            const tokenCookie = useCookie('auth_token', {
+              maxAge: 60 * 60 * 24 * 7, // 1 week
+              path: '/',
+              sameSite: 'lax'
+            });
+            tokenCookie.value = responseToken;
+            
+            // Store user in cookie
+            const userCookie = useCookie('auth_user', {
+              maxAge: 60 * 60 * 24 * 7, // 1 week
+              path: '/',
+              sameSite: 'lax'
+            });
+            userCookie.value = JSON.stringify(user.value);
+            
+            console.log('Token and user saved to cookies');
           }
           
           console.log('User authenticated via API successfully');
@@ -214,7 +304,57 @@ export function useAuth() {
         return;
       }
       
-      // Navigate to sign-in page after successful registration
+      // Check if the signup response contains a token
+      if (response.data && typeof response.data === 'object') {
+        console.log('Signup response data:', JSON.stringify(response.data));
+        
+        // Try to extract token from different possible locations
+        let responseToken = null;
+        let userData = null;
+        
+        // Case 1: Our expected format with data.token or data.access_token
+        if (response.data.token || response.data.access_token) {
+          responseToken = response.data.access_token || response.data.token;
+          userData = response.data.user;
+        } 
+        // Case 2: Token directly in response.data (if data itself is the token)
+        else if (typeof response.data === 'string' && (response.data as string).length > 20) {
+          responseToken = response.data as string;
+          userData = { email: credentials.email, name: credentials.name };
+        }
+        // Case 3: Response might have access_token at the root level
+        else if (response.data.access_token && !response.data.user) {
+          responseToken = response.data.access_token;
+          userData = { email: credentials.email, name: credentials.name };
+        }
+        
+        console.log('Extracted token from signup:', responseToken ? `${responseToken.substring(0, 10)}...` : 'No token found');
+        
+        if (responseToken) {
+          token.value = responseToken;
+          user.value = userData || { email: credentials.email, name: credentials.name };
+          isAuthenticated.value = true;
+          
+          // Force immediate save to localStorage
+          if (process.client) {
+            localStorage.setItem(TOKEN_KEY, responseToken);
+            console.log('Token saved to localStorage from signup:', localStorage.getItem(TOKEN_KEY) ? 'Successfully saved' : 'Failed to save');
+            
+            if (user.value) {
+              localStorage.setItem(USER_KEY, JSON.stringify(user.value));
+              console.log('User saved to localStorage from signup');
+            }
+          }
+          
+          console.log('User authenticated via signup successfully');
+          
+          // Navigate to dashboard page instead of sign-in
+          router.push('/dashboard');
+          return;
+        }
+      }
+      
+      // If no token in response, navigate to sign-in page as before
       router.push('/sign-in');
     } catch (err: any) {
       error.value = err.message || 'Registration failed';
@@ -320,23 +460,56 @@ export function useAuth() {
   // Logout
   const logout = async () => {
     isLoading.value = true;
+    error.value = '';
     
     try {
-      // Call logout endpoint if authenticated
-      if (isAuthenticated.value) {
-        await authService.logout();
-      }
-    } catch (err) {
-      // Ignore errors on logout
-    } finally {
+      // Call logout API endpoint
+      const response = await authService.logout();
+      
+      console.log('Logout API response:', response);
+      
       // Clear auth state regardless of API response
       token.value = null;
       user.value = null;
       isAuthenticated.value = false;
-      isLoading.value = false;
       
-      // Navigate to login page
-      router.push('/sign-in');
+      // Clear localStorage
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      
+      // Clear cookies
+      const tokenCookie = useCookie('auth_token');
+      tokenCookie.value = null;
+      const userCookie = useCookie('auth_user');
+      userCookie.value = null;
+      
+      console.log('Auth state cleared from memory, localStorage, and cookies');
+      
+      // Navigate back to login page
+      router.push('/login');
+    } catch (err: any) {
+      console.error('Error during logout:', err);
+      error.value = err.message || 'Logout failed';
+      
+      // Force logout anyway
+      token.value = null;
+      user.value = null;
+      isAuthenticated.value = false;
+      
+      // Clear localStorage
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+      
+      // Clear cookies
+      const tokenCookie = useCookie('auth_token');
+      tokenCookie.value = null;
+      const userCookie = useCookie('auth_user');
+      userCookie.value = null;
+      
+      // Navigate back to login page
+      router.push('/login');
+    } finally {
+      isLoading.value = false;
     }
   };
 

@@ -19,7 +19,7 @@
         <UiCardContent>
           <div class="h-[500px] flex flex-col">
             <!-- Chat messages container -->
-            <div class="flex-1 overflow-y-auto mb-4 p-4 border rounded-md bg-muted/10">
+            <div class="flex-1 overflow-y-auto mb-4 p-4 border rounded-md bg-muted/10" ref="messagesContainer">
               <div class="space-y-4">
                 <!-- Assistant message -->
                 <div class="flex items-start gap-3">
@@ -31,7 +31,7 @@
                   </div>
                 </div>
                 
-                <!-- Example user message -->
+                <!-- Dynamic messages -->
                 <div v-if="messages.length > 0" v-for="(message, i) in messages" :key="i" class="flex items-start gap-3" :class="message.isUser ? 'justify-end' : ''">
                   <template v-if="!message.isUser">
                     <div class="h-8 w-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
@@ -39,6 +39,17 @@
                     </div>
                     <div class="bg-muted p-3 max-w-[80%] overflow-hidden" style="border-radius: 24px; border-top-left-radius: 4px; word-break: break-all; overflow-wrap: break-word;">
                       <p class="text-sm break-words whitespace-pre-wrap">{{ message.text }}</p>
+                      <!-- Suggestions if available -->
+                      <div v-if="message.suggestions && message.suggestions.length > 0" class="mt-3 flex flex-wrap gap-2">
+                        <button 
+                          v-for="(suggestion, si) in message.suggestions" 
+                          :key="si"
+                          @click="askQuickQuestion(suggestion)"
+                          class="px-2 py-1 text-xs border rounded-full hover:bg-primary hover:text-primary-foreground hover:border-primary transition-colors"
+                        >
+                          {{ suggestion }}
+                        </button>
+                      </div>
                     </div>
                   </template>
                   <template v-else>
@@ -77,12 +88,15 @@
                 type="text"
                 placeholder="Type your question here..."
                 class="w-full p-3 pr-12 border rounded-full focus:outline-none focus:ring-2 focus:ring-primary/50"
+                :disabled="isLoading"
               />
               <button 
                 @click="sendMessage"
                 class="absolute right-3 w-8 h-8 rounded-full bg-primary text-primary-foreground ring-2 ring-primary/20 shadow-sm flex items-center justify-center"
+                :disabled="isLoading"
               >
-                <Icon name="lucide:send" class="h-4 w-4" />
+                <Icon v-if="!isLoading" name="lucide:send" class="h-4 w-4" />
+                <Icon v-else name="lucide:loader-2" class="h-4 w-4 animate-spin" />
               </button>
             </div>
           </div>
@@ -93,20 +107,27 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { definePageMeta } from '#imports'
+import { sendChatMessage } from '@/services/chatbot'
 
 definePageMeta({
   layout: 'dashboard'
 })
 
 interface Message {
-  text: string
-  isUser: boolean
+  text: string;
+  isUser: boolean;
+  suggestions?: string[];
 }
 
 const userInput = ref('')
 const messages = ref<Message[]>([])
+const isLoading = ref(false)
+const messagesContainer = ref<HTMLElement | null>(null)
+
+// Generate a session ID for this chat session
+const sessionId = ref(`session-${Date.now()}`)
 
 const quickActions = [
   {
@@ -131,8 +152,18 @@ const quickActions = [
   }
 ]
 
-const sendMessage = () => {
-  if (!userInput.value.trim()) return
+// Scroll to bottom of messages container when new messages are added
+watch(messages, () => {
+  nextTick(() => {
+    if (messagesContainer.value) {
+      messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+    }
+  })
+}, { deep: true })
+
+// Send message to chatbot API
+const sendMessage = async () => {
+  if (!userInput.value.trim() || isLoading.value) return
   
   // Add user message
   messages.value.push({
@@ -140,15 +171,31 @@ const sendMessage = () => {
     isUser: true
   })
   
-  // Simulate assistant response (in a real app, this would call an API)
-  setTimeout(() => {
+  const userMessage = userInput.value
+  userInput.value = ''
+  isLoading.value = true
+  
+  try {
+    // Call the chatbot service
+    const response = await sendChatMessage(userMessage, undefined, sessionId.value)
+    
+    // Add assistant response
     messages.value.push({
-      text: `I understand you're asking about "${userInput.value}". In a real implementation, I would provide a helpful response based on your financial data.`,
+      text: response.message,
+      isUser: false,
+      suggestions: response.suggestions
+    })
+  } catch (error) {
+    console.error('Error calling chatbot API:', error)
+    
+    // Add error message
+    messages.value.push({
+      text: 'Sorry, I encountered an error while processing your request. Please try again.',
       isUser: false
     })
-  }, 1000)
-  
-  userInput.value = ''
+  } finally {
+    isLoading.value = false
+  }
 }
 
 const askQuickQuestion = (question: string) => {

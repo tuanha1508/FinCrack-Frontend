@@ -42,7 +42,17 @@
             <div class="font-medium">{{ company.name }}</div>
             <div class="text-xs text-muted-foreground">{{ company.symbol }}{{ company.currency ? ' • ' + company.currency : '' }}{{ company.exchange && company.exchange !== 'Unknown' ? ' • ' + company.exchange : '' }}</div>
           </div>
-          <Icon name="lucide:chevron-right" class="w-4 h-4 text-muted-foreground" />
+          <div class="flex items-center gap-2">
+            <button 
+              @click.stop="toggleWishlist(company.symbol)"
+              class="p-1 hover:bg-primary/20 rounded"
+              :class="isInWishlist(company.symbol) ? 'text-amber-500' : 'text-muted-foreground'"
+              :title="isInWishlist(company.symbol) ? 'Remove from wishlist' : 'Add to wishlist'"
+            >
+              <Icon :name="isInWishlist(company.symbol) ? 'lucide:star' : 'lucide:star'" class="w-4 h-4" />
+            </button>
+            <Icon name="lucide:chevron-right" class="w-4 h-4 text-muted-foreground" />
+          </div>
         </div>
       </div>
     </div>
@@ -62,6 +72,7 @@
 <script setup lang="ts">
 import { ref, watch, onMounted, onUnmounted } from 'vue';
 import tickersData from '@/constants/tickers.json';
+import { useWishlistStore } from '@/stores/wishlistStore';
 
 interface Company {
   name: string;
@@ -91,6 +102,9 @@ const selectedCompany = ref<Company | null>(null);
 const hasError = ref(false);
 const errorMessage = ref('');
 const searchContainer = ref<HTMLElement | null>(null);
+
+// Get wishlist store
+const wishlistStore = useWishlistStore();
 
 // Click outside listener
 onMounted(() => {
@@ -194,5 +208,15 @@ const selectCompany = (company: Company) => {
   searchQuery.value = company.name;
   showSuggestions.value = false;
   emit('companySelected', company);
+};
+
+// Check if a company is in the wishlist
+const isInWishlist = (symbol: string): boolean => {
+  return wishlistStore.isInWishlist(symbol);
+};
+
+// Toggle wishlist status
+const toggleWishlist = async (symbol: string) => {
+  await wishlistStore.toggleWishlist(symbol);
 };
 </script> 

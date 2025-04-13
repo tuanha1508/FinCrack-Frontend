@@ -5,5 +5,7 @@ export const API_ENDPOINTS = {
   LOGIN: '/api/auth/login',
   LOGOUT: '/api/auth/logout',
   PROFILE: '/api/profile',
-  DASHBOARD: '/api/dashboard'
+  DASHBOARD: '/api/dashboard',
+  CHATBOT: '/api/chatbot',
+  VIRTUAL_ASSISTANT: '/api/src/chatbot/query'
 } 
