@@ -24,6 +24,8 @@ yarn-error.log*
 /dist
 /build
 /out
+.nuxt/
+frontend/.nuxt/
 
 # Cache and temporary files
 .cache/
