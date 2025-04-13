@@ -16,10 +16,7 @@
           <h3 class="font-semibold">API Error</h3>
           <p>{{ errorMessage }}</p>
           <p class="mt-2 text-sm">
-            Please check your Financial Modeling Prep API key configuration.
-            <a href="https://site.financialmodelingprep.com/" target="_blank" class="underline font-medium">
-              Get an API key here
-            </a>
+            Please check that the data files are accessible.
           </p>
         </div>
       </div>
@@ -36,7 +33,7 @@
           </UiButton>
           <div v-else class="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
         </div>
-        <p class="text-muted-foreground">{{ company.exchange }}{{ company.currency ? ' • ' + company.currency : '' }}</p>
+        <p class="text-muted-foreground">{{ displayInfo }}</p>
       </div>
       <UiButton size="sm" class="gap-2">
         <Icon name="lucide:heart" class="h-4 w-4" />
@@ -49,29 +46,24 @@
       <UiCard class="md:col-span-2">
         <UiCardHeader class="flex flex-row items-center justify-between pb-2">
           <div>
-            <UiCardTitle class="text-lg text-foreground">Price Chart</UiCardTitle>
-            <UiCardDescription>{{ company.symbol }} stock performance</UiCardDescription>
+            <UiCardTitle class="text-lg text-foreground">Overview Chart</UiCardTitle>
+            <UiCardDescription>{{ company.symbol }}</UiCardDescription>
           </div>
-          <UiSelect defaultValue="1M">
-            <UiSelectTrigger class="w-[100px]">
+          <UiSelect v-model="selectedTimeRange" @update:model-value="updateChartTimeRange">
+            <UiSelectTrigger class="w-[150px]">
               <UiSelectValue placeholder="Time Range" />
             </UiSelectTrigger>
             <UiSelectContent>
-              <UiSelectItem value="1D">1 Day</UiSelectItem>
               <UiSelectItem value="1W">1 Week</UiSelectItem>
               <UiSelectItem value="1M">1 Month</UiSelectItem>
               <UiSelectItem value="3M">3 Months</UiSelectItem>
               <UiSelectItem value="1Y">1 Year</UiSelectItem>
-              <UiSelectItem value="5Y">5 Years</UiSelectItem>
             </UiSelectContent>
           </UiSelect>
         </UiCardHeader>
         <UiCardContent>
-          <div class="h-72">
-            <!-- Chart component would go here -->
-            <div class="h-full w-full flex items-center justify-center bg-muted/10 rounded-md">
-              <p class="text-muted-foreground">Price chart visualization</p>
-            </div>
+          <div class="h-72 relative">
+            <canvas ref="priceChartCanvas"></canvas>
           </div>
         </UiCardContent>
       </UiCard>
@@ -104,20 +96,32 @@
             <div class="border-t pt-4">
               <div class="grid grid-cols-2 gap-4">
                 <div>
-                  <div class="text-xs text-muted-foreground">Market Cap</div>
-                  <div class="font-medium">${{ formatLargeNumber(stockData.marketCap) }}</div>
-                </div>
-                <div>
-                  <div class="text-xs text-muted-foreground">Volume</div>
-                  <div class="font-medium">{{ formatLargeNumber(stockData.volume) }}</div>
-                </div>
-                <div>
                   <div class="text-xs text-muted-foreground">P/E Ratio</div>
                   <div class="font-medium">{{ stockData.peRatio.toFixed(2) }}</div>
                 </div>
                 <div>
-                  <div class="text-xs text-muted-foreground">Dividend Yield</div>
-                  <div class="font-medium">{{ stockData.dividendYield.toFixed(2) }}%</div>
+                  <div class="text-xs text-muted-foreground">PEG Ratio</div>
+                  <div class="font-medium">{{ stockData.pegRatio.toFixed(2) }}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">P/B Ratio</div>
+                  <div class="font-medium">{{ stockData.pbRatio.toFixed(2) }}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">P/S Ratio</div>
+                  <div class="font-medium">{{ stockData.psRatio.toFixed(2) }}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">ROE</div>
+                  <div class="font-medium">{{ stockData.roe.toFixed(2) }}%</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">RSI</div>
+                  <div class="font-medium">{{ stockData.rsi.toFixed(2) }}</div>
+                </div>
+                <div>
+                  <div class="text-xs text-muted-foreground">MACD Line</div>
+                  <div class="font-medium">{{ stockData.macdLine.toFixed(2) }}</div>
                 </div>
               </div>
             </div>
@@ -125,111 +129,6 @@
         </UiCardContent>
       </UiCard>
     </div>
-
-    <!-- Financial metrics -->
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle class="text-lg text-foreground">Financial Highlights</UiCardTitle>
-        <UiCardDescription>Key financial metrics for {{ company.name }}</UiCardDescription>
-      </UiCardHeader>
-      <UiCardContent>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          <div class="space-y-2">
-            <h3 class="text-sm font-medium text-muted-foreground">Revenue (TTM)</h3>
-            <div class="text-2xl font-bold text-foreground">${{ formatLargeNumber(financialData.revenue) }}</div>
-            <div class="flex items-center text-xs">
-              <span 
-                :class="financialData.revenueGrowth >= 0 ? 'text-emerald-500' : 'text-rose-500'"
-              >
-                {{ financialData.revenueGrowth >= 0 ? '+' : '' }}{{ financialData.revenueGrowth.toFixed(2) }}% YoY
-              </span>
-            </div>
-          </div>
-          
-          <div class="space-y-2">
-            <h3 class="text-sm font-medium text-muted-foreground">Net Income (TTM)</h3>
-            <div class="text-2xl font-bold text-foreground">${{ formatLargeNumber(financialData.netIncome) }}</div>
-            <div class="flex items-center text-xs">
-              <span 
-                :class="financialData.netIncomeGrowth >= 0 ? 'text-emerald-500' : 'text-rose-500'"
-              >
-                {{ financialData.netIncomeGrowth >= 0 ? '+' : '' }}{{ financialData.netIncomeGrowth.toFixed(2) }}% YoY
-              </span>
-            </div>
-          </div>
-          
-          <div class="space-y-2">
-            <h3 class="text-sm font-medium text-muted-foreground">EPS (TTM)</h3>
-            <div class="text-2xl font-bold text-foreground">${{ financialData.eps.toFixed(2) }}</div>
-            <div class="flex items-center text-xs">
-              <span 
-                :class="financialData.epsGrowth >= 0 ? 'text-emerald-500' : 'text-rose-500'"
-              >
-                {{ financialData.epsGrowth >= 0 ? '+' : '' }}{{ financialData.epsGrowth.toFixed(2) }}% YoY
-              </span>
-            </div>
-          </div>
-          
-          <div class="space-y-2">
-            <h3 class="text-sm font-medium text-muted-foreground">Profit Margin</h3>
-            <div class="text-2xl font-bold text-foreground">{{ financialData.profitMargin.toFixed(2) }}%</div>
-            <div class="flex items-center text-xs">
-              <span 
-                :class="financialData.profitMarginChange >= 0 ? 'text-emerald-500' : 'text-rose-500'"
-              >
-                {{ financialData.profitMarginChange >= 0 ? '+' : '' }}{{ financialData.profitMarginChange.toFixed(2) }}% YoY
-              </span>
-            </div>
-          </div>
-        </div>
-      </UiCardContent>
-    </UiCard>
-
-    <!-- News and Analysis -->
-    <UiCard>
-      <UiCardHeader>
-        <UiCardTitle class="text-lg text-foreground">Recent News</UiCardTitle>
-        <UiCardDescription>Latest updates about {{ company.name }}</UiCardDescription>
-      </UiCardHeader>
-      <UiCardContent>
-        <div v-if="newsLoading" class="flex justify-center my-6">
-          <div class="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-primary"></div>
-        </div>
-        
-        <div v-else-if="newsError" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-          {{ newsError }}
-        </div>
-        
-        <div v-else class="space-y-4">
-          <div v-for="(article, i) in companyNews" :key="i" class="flex items-start gap-4 pb-4 border-b last:border-0 last:pb-0">
-            <div class="flex-1">
-              <div class="flex items-center gap-2 mb-1">
-                <h4 class="font-medium text-foreground">{{ article.title }}</h4>
-                <span 
-                  v-if="article.overall_sentiment_score" 
-                  class="text-xs px-2 py-0.5 rounded-full" 
-                  :class="getSentimentClass(article.overall_sentiment_score)"
-                >
-                  {{ formatSentiment(article.overall_sentiment_score) }}
-                </span>
-              </div>
-              <p class="text-sm text-muted-foreground line-clamp-2">{{ article.summary }}</p>
-              <div class="mt-2 flex justify-between items-center">
-                <span class="text-xs text-muted-foreground">{{ article.source }} · {{ formatDate(article.time_published) }}</span>
-                <a 
-                  :href="article.url" 
-                  target="_blank"
-                  class="text-xs text-primary flex items-center hover:underline"
-                >
-                  Read more
-                  <Icon name="lucide:external-link" class="ml-1 h-3 w-3" />
-                </a>
-              </div>
-            </div>
-          </div>
-        </div>
-      </UiCardContent>
-    </UiCard>
   </div>
   <div v-else class="flex justify-center items-center h-64">
     <div class="text-center">
@@ -241,8 +140,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
-import companiesData from '@/data/companiesData';
+import { ref, watch, onMounted, computed } from 'vue';
+import { Chart, ChartItem, registerables } from 'chart.js';
+
+// Register Chart.js components
+Chart.register(...registerables);
 
 // Define interfaces
 interface Company {
@@ -252,7 +154,7 @@ interface Company {
   currency?: string;
 }
 
-// Define interfaces that match our data source structure
+// Define interface that matches our data source structure
 interface StockData {
   price: number;
   change: number;
@@ -261,33 +163,13 @@ interface StockData {
   high: number;
   low: number;
   volume: number;
-  prevClose: number;
-  marketCap: number;
   peRatio: number;
-  dividendYield: number;
-}
-
-interface FinancialData {
-  revenue: number;
-  revenueGrowth: number;
-  grossProfit: number;
-  grossProfitGrowth: number;
-  netIncome: number;
-  netIncomeGrowth: number;
-  eps: number;
-  epsGrowth: number;
-  profitMargin: number;
-  profitMarginChange: number;
-}
-
-// News Item interface
-interface NewsItem {
-  title: string;
-  url: string;
-  time_published: string;
-  summary: string;
-  source: string;
-  overall_sentiment_score?: number;
+  pbRatio: number;
+  psRatio: number;
+  pegRatio: number;
+  roe: number;
+  rsi: number;
+  macdLine: number;
 }
 
 // Define component name
@@ -303,7 +185,17 @@ const props = defineProps({
   }
 });
 
-// Hardcoded company stock data
+// Chart references
+const priceChartCanvas = ref<HTMLCanvasElement | null>(null);
+let priceChart: Chart | null = null;
+
+// Time range for chart
+const selectedTimeRange = ref('1M');
+
+// Chart data
+const chartData = ref<any[]>([]);
+
+// Stock data
 const stockData = ref<StockData>({
   price: 0,
   change: 0,
@@ -311,45 +203,29 @@ const stockData = ref<StockData>({
   open: 0,
   high: 0,
   low: 0,
-  volume: 0, 
-  prevClose: 0,
-  marketCap: 0,
+  volume: 0,
   peRatio: 0,
-  dividendYield: 0
-});
-
-// Hardcoded financial data
-const financialData = ref<FinancialData>({
-  revenue: 0,
-  revenueGrowth: 0, 
-  grossProfit: 0,
-  grossProfitGrowth: 0,
-  netIncome: 0,
-  netIncomeGrowth: 0,
-  eps: 0,
-  epsGrowth: 0,
-  profitMargin: 0,
-  profitMarginChange: 0
+  pbRatio: 0,
+  psRatio: 0,
+  pegRatio: 0,
+  roe: 0,
+  rsi: 0,
+  macdLine: 0
 });
 
 const isLoading = ref(false);
 const errorMessage = ref('');
 const hasApiError = ref(false);
 
-// News data
-const companyNews = ref<NewsItem[]>([]);
-const newsLoading = ref(false);
-const newsError = ref<string | null>(null);
-
 // Format currency values
 const formatCurrency = (value: number): string => {
-  return value.toFixed(2);
+  return isNaN(value) ? 'N/A' : value.toFixed(2);
 };
 
 // Format large numbers (billions, millions)
 const formatLargeNumber = (value: number): string => {
-  if (value === undefined || value === null) {
-    return '0';
+  if (value === undefined || value === null || isNaN(value)) {
+    return 'N/A';
   }
   
   if (value >= 1000000000000) {
@@ -364,53 +240,300 @@ const formatLargeNumber = (value: number): string => {
   return value.toString();
 };
 
-// Load hardcoded data for the company
+// Helper function to safely handle numbers
+const safeNumber = (value: any, defaultValue = 0): number => {
+  if (value === null || value === undefined || isNaN(parseFloat(value))) {
+    return defaultValue;
+  }
+  return parseFloat(value);
+};
+
+// Custom JSON parser to handle NaN values
+const parseJsonSafely = async (response: Response) => {
+  const text = await response.text();
+  // Replace NaN, Infinity and -Infinity with null which is valid in JSON
+  const safeText = text.replace(/\bNaN\b/g, "null")
+                       .replace(/\b-?Infinity\b/g, "null");
+  try {
+    return JSON.parse(safeText);
+  } catch (error: unknown) {
+    console.error("JSON parse error:", error);
+    throw new Error(`Invalid JSON response: ${error instanceof Error ? error.message : String(error)}`);
+  }
+};
+
+// Load data for the company
 const loadHardcodedData = (symbol: string) => {
   isLoading.value = true;
   hasApiError.value = false;
   errorMessage.value = '';
-  newsLoading.value = true;
-  newsError.value = null;
   
-  // Simulate API delay
-  setTimeout(() => {
-    const companyKey = Object.keys(companiesData).find(key => key === symbol) || 'AAPL';
-    const data = companiesData[companyKey];
-    
-    // Update stock data
-    stockData.value = data.stockData;
-    
-    // Update financial data
-    financialData.value = data.financialData;
-    
-    // Update news
-    companyNews.value = data.news;
-    
-    // Update loading states
-    isLoading.value = false;
-    newsLoading.value = false;
-  }, 800); // Add a delay to simulate real API call
+  // Default window size for technical indicators
+  const WINDOW_SIZE = 14;
+  
+  // Fetch data from API endpoint using POST request
+  fetch('http://localhost:5000/api/stock_data', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      company_input: symbol,
+      window: WINDOW_SIZE
+    })
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`Failed to fetch data: ${response.statusText}`);
+      }
+      return parseJsonSafely(response);
+    })
+    .then(data => {
+      // Check if request was successful
+      if (!data.success) {
+        throw new Error(data.error || 'Unknown error occurred');
+      }
+      
+      updateDashboardWithApiData(data);
+    })
+    .catch(error => {
+      console.error('Error loading data:', error);
+      hasApiError.value = true;
+      errorMessage.value = `Error loading data: ${error.message}`;
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
 };
 
-// Format date
-const formatDate = (timestamp: string): string => {
-  if (!timestamp) return "";
-  const date = new Date(timestamp);
-  return date.toLocaleString();
+// Process API data and update dashboard
+const updateDashboardWithApiData = (data: any) => {
+  // Log the complete API response for debugging
+  console.log('API Response structure:', data);
+  
+  // Extract historical data and update chart data
+  const historicalData = data.chart_data || [];
+  chartData.value = [...historicalData];
+  
+  // Extract metrics data with proper fallbacks
+  const metricsData = data.metrics_data || {};
+  console.log('Metrics data raw:', metricsData);
+  
+  // Get the latest historical data point and previous day
+  const latestData = historicalData[0] || {};
+  const prevDay = historicalData[1] || {};
+  
+  // Extract valuation and technical indicators with better structure handling
+  // Based on the structure shown in the image
+  const valuation = metricsData['valuation_and_profitability'];
+                   
+  const technical = metricsData['technical_indicators'];
+  
+  // Log extracted data structures
+  console.log('Latest data:', latestData);
+  console.log('Valuation metrics extracted:', valuation);
+  console.log('Technical indicators extracted:', technical);
+  
+  // Get the latest price (prioritizing latest_price from technical indicators)
+  const latestPrice = safeNumber(technical.latest_price);
+  
+  const prevClose = safeNumber(prevDay.Close);
+  const priceChange = latestPrice- prevClose;
+  const priceChangePercent = prevClose ? (priceChange / prevClose) * 100 : 0;
+  
+  // Update stock data with values from API with enhanced structure handling
+  stockData.value = {
+    price: latestPrice,
+    change: safeNumber(data.change) || priceChange,
+    changePercent: safeNumber(data.change_percent) || priceChangePercent,
+    open: safeNumber(data.open) || safeNumber(latestData.Open),
+    high: safeNumber(data.high) || safeNumber(latestData.High),
+    low: safeNumber(data.low) || safeNumber(latestData.Low),
+    volume: safeNumber(data.volume) || safeNumber(latestData.Volume),
+    peRatio: safeNumber(valuation.pe_ratio) || safeNumber(data.pe_ratio) || 0,
+    pbRatio: safeNumber(valuation.pb_ratio) || safeNumber(data.pb_ratio) || 0,
+    psRatio: safeNumber(valuation.ps_ratio) || safeNumber(data.ps_ratio) || 0,
+    pegRatio: safeNumber(valuation.peg_ratio) || safeNumber(data.peg_ratio) || 0,
+    roe: safeNumber(valuation.roe * 100) || safeNumber(data.roe) || 0, // Convert from decimal to percentage if from valuation
+    rsi: safeNumber(technical.rsi) || safeNumber(data.rsi) || 0,
+    macdLine: safeNumber(technical.macd_line) || safeNumber(data.macd_line) || 0
+  };
+  
+  // Log the final data being used to update the UI
+  console.log('Final stock data for dashboard:', stockData.value);
+  
+  // Render the price chart with the updated data
+  renderPriceChart();
 };
 
-// Get sentiment class
-const getSentimentClass = (score: number): string => {
-  if (score > 0.25) return "bg-green-100 text-green-800";
-  if (score < -0.25) return "bg-red-100 text-red-800";
-  return "bg-yellow-100 text-yellow-800";
+// Format date for chart display
+const formatDate = (dateString: string): string => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 };
 
-// Format sentiment
-const formatSentiment = (score: number): string => {
-  if (score > 0.25) return "Positive";
-  if (score < -0.25) return "Negative";
-  return "Neutral";
+// Filter chart data based on selected time range
+const filteredChartData = computed(() => {
+  if (!chartData.value || chartData.value.length === 0) {
+    return [];
+  }
+
+  const now = new Date();
+  let startDate = new Date();
+
+  switch (selectedTimeRange.value) {
+    case '1D':
+      startDate.setDate(now.getDate() - 1);
+      break;
+    case '1W':
+      startDate.setDate(now.getDate() - 7);
+      break;
+    case '1M':
+      startDate.setMonth(now.getMonth() - 1);
+      break;
+    case '3M':
+      startDate.setMonth(now.getMonth() - 3);
+      break;
+    case '1Y':
+      startDate.setFullYear(now.getFullYear() - 1);
+      break;
+    case '5Y':
+      startDate.setFullYear(now.getFullYear() - 5);
+      break;
+    default:
+      startDate.setMonth(now.getMonth() - 1); // Default to 1 month
+  }
+
+  return chartData.value
+    .filter(item => new Date(item.Date) >= startDate)
+    .sort((a, b) => new Date(a.Date).getTime() - new Date(b.Date).getTime());
+});
+
+// Update chart with new time range
+const updateChartTimeRange = () => {
+  if (priceChart) {
+    renderPriceChart();
+  }
+};
+
+// Render price chart
+const renderPriceChart = () => {
+  if (!priceChartCanvas.value) return;
+
+  // Destroy existing chart if it exists
+  if (priceChart) {
+    priceChart.destroy();
+  }
+
+  const data = filteredChartData.value;
+  if (!data || data.length === 0) return;
+
+  const dates = data.map(item => formatDate(item.Date));
+  const closePrices = data.map(item => item.Close);
+  const emaPrices = data.map(item => item.EMA); // Assuming EMA is available in chartData
+  const smaPrices = data.map(item => item.SMA); // Assuming SMA is available in chartData
+
+  // Determine chart color based on price trend (using Close price)
+  const isPositiveTrend = closePrices[0] <= closePrices[closePrices.length - 1];
+  const closeColor = isPositiveTrend ? 'rgb(16, 185, 129)' : 'rgb(239, 68, 68)';
+  const emaColor = 'rgb(59, 130, 246)'; // Blue for EMA
+  const smaColor = 'rgb(249, 115, 22)'; // Orange for SMA
+
+  priceChart = new Chart(priceChartCanvas.value as ChartItem, {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [
+        {
+          label: 'Close',
+          data: closePrices,
+          borderColor: closeColor,
+          backgroundColor: closeColor + '10', // Lighter fill
+          borderWidth: 2,
+          pointRadius: 0.5,
+          pointHoverRadius: 3,
+          tension: 0.1,
+          fill: false // Keep fill off for Close to avoid overlap
+        },
+        {
+          label: 'EMA',
+          data: emaPrices,
+          borderColor: emaColor,
+          backgroundColor: emaColor + '10',
+          borderWidth: 1.5, // Slightly thinner
+          pointRadius: 0,
+          pointHoverRadius: 3,
+          tension: 0.1,
+          fill: false
+        },
+        {
+          label: 'SMA',
+          data: smaPrices,
+          borderColor: smaColor,
+          backgroundColor: smaColor + '10',
+          borderWidth: 1.5, // Slightly thinner
+          pointRadius: 0,
+          pointHoverRadius: 3,
+          tension: 0.1,
+          fill: false
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true, // Enable the legend
+          position: 'top',
+          labels: {
+            usePointStyle: false, // Ensure we use the box shape
+            boxWidth: 20,      // Make the box wider like a line
+            boxHeight: 2,      // Make the box shorter like a line
+            font: {
+              size: 10
+            },
+            padding: 10
+          }
+        },
+        tooltip: {
+          mode: 'index',
+          intersect: false,
+          callbacks: {
+            label: (context) => `$${context.parsed.y.toFixed(2)}`
+          }
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            maxTicksLimit: 8,
+            maxRotation: 0,
+            font: {
+              size: 10
+            }
+          }
+        },
+        y: {
+          // @ts-ignore - Chart.js typing issue
+          grid: {
+            color: 'rgba(200, 200, 200, 0.2)'
+          },
+          ticks: {
+            callback: (value) => `$${value}`
+          }
+        }
+      },
+      interaction: {
+        mode: 'nearest',
+        axis: 'x',
+        intersect: false
+      }
+    }
+  });
 };
 
 // Watch for changes in company and load data
@@ -426,4 +549,29 @@ const refreshData = () => {
     loadHardcodedData(props.company.symbol);
   }
 };
+
+// Initialize chart when component is mounted
+onMounted(() => {
+  if (props.company) {
+    loadHardcodedData(props.company.symbol);
+  }
+});
+
+// Computed property to display exchange and currency cleanly
+const displayInfo = computed(() => {
+  if (!props.company) return '';
+
+  const parts = [];
+  // Only add exchange if it exists and is not 'Unknown'
+  if (props.company.exchange && props.company.exchange !== 'Unknown') {
+    parts.push(props.company.exchange);
+  }
+  // Add currency if it exists
+  if (props.company.currency) {
+    parts.push(props.company.currency);
+  }
+
+  // Join the parts with a separator, filtering out any empty strings
+  return parts.filter(part => part).join(' • ');
+});
 </script> 

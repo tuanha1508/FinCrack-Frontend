@@ -1,0 +1,14 @@
+{
+    "valuation_and_profitability": {
+        "pe_ratio": 31.45238,
+        "pb_ratio": 44.648487,
+        "ps_ratio": 7.5212984,
+        "peg_ratio": 1.839,
+        "roe": 1.3652
+    },
+    "technical_indicators": {
+        "latest_price": 198.15,
+        "rsi": 43.09,
+        "macd_line": -9.88
+    }
+}

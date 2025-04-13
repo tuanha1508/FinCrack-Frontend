@@ -15,35 +15,6 @@
       </UiButton>
     </div>
 
-    <!-- User data overview -->
-    <div v-if="userData" class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div class="bg-card rounded-lg shadow-sm p-4">
-        <h3 class="text-sm font-medium text-muted-foreground mb-1">Account Balance</h3>
-        <p class="text-2xl font-semibold">
-          {{ userData.dashboardData?.accountBalance ? `$${userData.dashboardData.accountBalance.toLocaleString()}` : 'N/A' }}
-        </p>
-      </div>
-      <div class="bg-card rounded-lg shadow-sm p-4">
-        <h3 class="text-sm font-medium text-muted-foreground mb-1">Savings Goal</h3>
-        <p class="text-2xl font-semibold">
-          {{ userData.dashboardData?.savingsGoal ? `$${userData.dashboardData.savingsGoal.toLocaleString()}` : 'N/A' }}
-        </p>
-      </div>
-      <div class="bg-card rounded-lg shadow-sm p-4">
-        <h3 class="text-sm font-medium text-muted-foreground mb-1">Investment Performance</h3>
-        <p class="text-2xl font-semibold flex items-center">
-          {{ userData.dashboardData?.investmentPerformance?.totalValue ? `$${userData.dashboardData.investmentPerformance.totalValue.toLocaleString()}` : 'N/A' }}
-          <span 
-            v-if="userData.dashboardData?.investmentPerformance?.changePercent"
-            :class="userData.dashboardData.investmentPerformance.changePercent >= 0 ? 'text-green-500' : 'text-red-500'"
-            class="text-sm ml-2">
-            {{ userData.dashboardData.investmentPerformance.changePercent >= 0 ? '↑' : '↓' }}
-            {{ Math.abs(userData.dashboardData.investmentPerformance.changePercent).toFixed(2) }}%
-          </span>
-        </p>
-      </div>
-    </div>
-
     <!-- Loading indicator -->
     <div v-if="isLoading" class="flex justify-center items-center py-4">
       <span class="loading loading-spinner loading-md"></span>

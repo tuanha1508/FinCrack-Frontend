@@ -15,6 +15,13 @@ interface StockData {
   marketCap: number;
   peRatio: number;
   dividendYield: number;
+  pegRatio: number;
+  roe: number;
+  rsi: number;
+  pbRatio: number;
+  roa: number;
+  macdLine: number;
+  psRatio: number;
 }
 
 interface FinancialData {
@@ -59,7 +66,14 @@ const companiesData: Record<string, CompanyData> = {
       prevClose: 183.21,
       marketCap: 2870000000000,
       peRatio: 30.12,
-      dividendYield: 0.52
+      dividendYield: 0.52,
+      pegRatio: 2.45,
+      roe: 163.7,
+      rsi: 62.8,
+      pbRatio: 46.2,
+      roa: 25.6,
+      macdLine: 1.85,
+      psRatio: 7.34
     },
     financialData: {
       revenue: 394328000000,
@@ -112,7 +126,14 @@ const companiesData: Record<string, CompanyData> = {
       prevClose: 411.57,
       marketCap: 3090000000000,
       peRatio: 38.42,
-      dividendYield: 0.68
+      dividendYield: 0.68,
+      pegRatio: 2.17,
+      roe: 43.8,
+      rsi: 58.3,
+      pbRatio: 11.5,
+      roa: 22.1,
+      macdLine: 2.14,
+      psRatio: 12.76
     },
     financialData: {
       revenue: 211915000000,
@@ -165,7 +186,14 @@ const companiesData: Record<string, CompanyData> = {
       prevClose: 143.52,
       marketCap: 1800000000000,
       peRatio: 24.68,
-      dividendYield: 0.0
+      dividendYield: 0.0,
+      pegRatio: 1.65,
+      roe: 27.5,
+      rsi: 47.2,
+      pbRatio: 5.7,
+      roa: 16.8,
+      macdLine: -0.53,
+      psRatio: 5.89
     },
     financialData: {
       revenue: 305637000000,
