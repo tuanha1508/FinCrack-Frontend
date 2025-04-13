@@ -104,10 +104,10 @@ interface _GlobalComponents {
     'Button': typeof import("../components/ui/button/index")['Button']
     'Chart': typeof import("../components/ui/chart/index")['Chart']
     'Checkbox': typeof import("../components/ui/checkbox/index")['Checkbox']
+    'CustomButton': typeof import("../components/ui/custombutton/index")['CustomButton']
     'FormInput': typeof import("../components/ui/forminput/index")['FormInput']
     'Input': typeof import("../components/ui/input/index")['Input']
     'Label': typeof import("../components/ui/label/index")['Label']
-    'CustomButton': typeof import("../components/ui/custombutton/index")['CustomButton']
     'RadioGroup': typeof import("../components/ui/radio-group/index")['RadioGroup']
     'RadioGroupItem': typeof import("../components/ui/radio-group/index")['RadioGroupItem']
     'Select': typeof import("../components/ui/select/index")['Select']
@@ -226,10 +226,10 @@ interface _GlobalComponents {
     'LazyButton': LazyComponent<typeof import("../components/ui/button/index")['Button']>
     'LazyChart': LazyComponent<typeof import("../components/ui/chart/index")['Chart']>
     'LazyCheckbox': LazyComponent<typeof import("../components/ui/checkbox/index")['Checkbox']>
+    'LazyCustomButton': LazyComponent<typeof import("../components/ui/custombutton/index")['CustomButton']>
     'LazyFormInput': LazyComponent<typeof import("../components/ui/forminput/index")['FormInput']>
     'LazyInput': LazyComponent<typeof import("../components/ui/input/index")['Input']>
     'LazyLabel': LazyComponent<typeof import("../components/ui/label/index")['Label']>
-    'LazyCustomButton': LazyComponent<typeof import("../components/ui/custombutton/index")['CustomButton']>
     'LazyRadioGroup': LazyComponent<typeof import("../components/ui/radio-group/index")['RadioGroup']>
     'LazyRadioGroupItem': LazyComponent<typeof import("../components/ui/radio-group/index")['RadioGroupItem']>
     'LazySelect': LazyComponent<typeof import("../components/ui/select/index")['Select']>
@@ -354,10 +354,10 @@ export const CardTitle: typeof import("../components/ui/card/index")['CardTitle'
 export const Button: typeof import("../components/ui/button/index")['Button']
 export const Chart: typeof import("../components/ui/chart/index")['Chart']
 export const Checkbox: typeof import("../components/ui/checkbox/index")['Checkbox']
+export const CustomButton: typeof import("../components/ui/custombutton/index")['CustomButton']
 export const FormInput: typeof import("../components/ui/forminput/index")['FormInput']
 export const Input: typeof import("../components/ui/input/index")['Input']
 export const Label: typeof import("../components/ui/label/index")['Label']
-export const CustomButton: typeof import("../components/ui/custombutton/index")['CustomButton']
 export const RadioGroup: typeof import("../components/ui/radio-group/index")['RadioGroup']
 export const RadioGroupItem: typeof import("../components/ui/radio-group/index")['RadioGroupItem']
 export const Select: typeof import("../components/ui/select/index")['Select']
@@ -476,10 +476,10 @@ export const LazyCardTitle: LazyComponent<typeof import("../components/ui/card/i
 export const LazyButton: LazyComponent<typeof import("../components/ui/button/index")['Button']>
 export const LazyChart: LazyComponent<typeof import("../components/ui/chart/index")['Chart']>
 export const LazyCheckbox: LazyComponent<typeof import("../components/ui/checkbox/index")['Checkbox']>
+export const LazyCustomButton: LazyComponent<typeof import("../components/ui/custombutton/index")['CustomButton']>
 export const LazyFormInput: LazyComponent<typeof import("../components/ui/forminput/index")['FormInput']>
 export const LazyInput: LazyComponent<typeof import("../components/ui/input/index")['Input']>
 export const LazyLabel: LazyComponent<typeof import("../components/ui/label/index")['Label']>
-export const LazyCustomButton: LazyComponent<typeof import("../components/ui/custombutton/index")['CustomButton']>
 export const LazyRadioGroup: LazyComponent<typeof import("../components/ui/radio-group/index")['RadioGroup']>
 export const LazyRadioGroupItem: LazyComponent<typeof import("../components/ui/radio-group/index")['RadioGroupItem']>
 export const LazySelect: LazyComponent<typeof import("../components/ui/select/index")['Select']>

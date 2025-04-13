@@ -20,7 +20,7 @@ export default defineNuxtConfig({
 
   routeRules: {
     // Fix manifest-route-rule middleware conflict by setting override to true
-    '/**': { middlewareOptions: { 'manifest-route-rule': { override: true } } }
+    '/**': { middlewareOptions: { 'manifest-route-rule': { override: true } } } as any
   },
 
   modules: [
@@ -44,13 +44,18 @@ export default defineNuxtConfig({
   ],
 
   build: {
-    transpile: ['primevue']
+    transpile: ['primevue', 'chart.js', 'chart.js/auto']
   },
 
   vite: {
     plugins: [
       tailwindcss(),
     ],
+    build: {
+      rollupOptions: {
+        // Removed external: ['chart.js/auto'] to fix Vercel deployment issue
+      }
+    },
   },
 
   app: {
