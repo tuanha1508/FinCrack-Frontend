@@ -34,7 +34,7 @@ export interface BankRecommendationRequest {
  */
 export async function fetchBankRecommendations(requestData: BankRecommendationRequest) {
   try {
-    const response = await fetch('/api/banks/recommendation', {
+    const response = await fetch('/banks/recommendation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

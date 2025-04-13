@@ -40,8 +40,10 @@ export const useUserService = () => {
   const api = useApi();
 
   // Get user dashboard data
-  const getUserDashboardData = () => 
-    api.get<UserData>('/user/dashboard');
+  const getUserDashboardData = async () => {
+    const response = await api.get<UserData>('/users/me');
+    return response;
+  };
 
   // Get user profile data
   const getUserProfile = () => 

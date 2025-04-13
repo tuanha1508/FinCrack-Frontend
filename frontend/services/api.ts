@@ -1,5 +1,8 @@
 import { useFetch, useRuntimeConfig } from '#imports';
 
+// Define TOKEN_KEY to match the one in useAuth.ts
+const TOKEN_KEY = 'auth_token';
+
 // Types
 export interface ApiResponse<T> {
   data?: T;
@@ -28,22 +31,11 @@ export const useApi = () => {
     const { method = 'GET', body, headers = {} } = options;
 
     // Check for admin bypass token in localStorage
-    const authToken = process.client ? localStorage.getItem('auth_token') : null;
+    const authToken = process.client ? localStorage.getItem(TOKEN_KEY) : null;
     
-    // Debug token info
-    if (process.client) {
-      if (authToken) {
-        console.log(`API Request to ${endpoint} with token: ${authToken.substring(0, 10)}...`);
-      } else {
-        console.log(`API Request to ${endpoint} with NO token found in localStorage`);
-        
-        // Attempt to set token again for debugging
-        if (endpoint.includes('/auth/login') || endpoint.includes('/auth/signup')) {
-          console.log('This is a login/signup request, no token expected');
-        } else {
-          console.log('Non-auth request without token - this might indicate an authentication issue');
-        }
-      }
+    // Debug token info - reduced logging
+    if (process.client && !authToken && !endpoint.includes('/auth/login') && !endpoint.includes('/auth/signup')) {
+      console.log(`API Request to ${endpoint} with no token - possible auth issue`);
     }
     
     // If using admin bypass token, return mock responses for auth-related endpoints
@@ -76,7 +68,7 @@ export const useApi = () => {
       }
       
       // Handle user dashboard data
-      if (endpoint === '/user/dashboard') {
+      if (endpoint === '/users/me') {
         return {
           data: {
             id: 'admin-local',
@@ -118,27 +110,40 @@ export const useApi = () => {
         ...headers,
       };
       
-      // Log the final headers for debugging
-      console.log(`API Request headers for ${endpoint}:`, requestHeaders);
-      
-      const { data, error } = await useFetch(`${baseUrl}${endpoint}`, {
+      // Use native fetch instead of useFetch
+      const response = await fetch(`${baseUrl}${endpoint}`, {
         method,
-        body,
+        body: body ? JSON.stringify(body) : undefined,
         headers: requestHeaders,
+        credentials: 'include', // Include cookies if necessary
       });
-
-      if (error.value) {
+      
+      let data;
+      let errorMessage;
+      
+      try {
+        data = await response.json();
+      } catch (e) {
+        // Handle non-JSON responses
+        const text = await response.text();
+        errorMessage = text || 'Invalid response format';
+      }
+      
+      if (!response.ok) {
+        // Only log errors, not successful responses
+        console.error(`API Error [${endpoint}] ${response.status}: ${data?.message || errorMessage || response.statusText}`);
         return {
-          error: error.value?.message || 'An error occurred',
-          status: error.value?.statusCode || 500,
+          error: data?.message || errorMessage || `Error ${response.status}: ${response.statusText}`,
+          status: response.status,
         };
       }
 
       return {
-        data: data.value as T,
-        status: 200,
+        data: data as T,
+        status: response.status,
       };
     } catch (err: any) {
+      console.error(`API Exception [${endpoint}]:`, err.message);
       return {
         error: err.message || 'An error occurred',
         status: err.statusCode || 500,
