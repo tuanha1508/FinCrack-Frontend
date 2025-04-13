@@ -57,7 +57,7 @@
       
       <!-- Footer bottom section -->
       <div class="mt-4 pt-2 flex flex-col md:flex-row justify-center items-center gap-2">
-        <p :class="isDark ? 'text-gray-400' : 'text-gray-600'" class="text-[9px] text-center">&copy; {{ currentYear }} FinHack. All rights reserved.</p>
+        <p :class="isDark ? 'text-gray-400' : 'text-gray-600'" class="text-[9px] text-center">&copy; {{ currentYear }} FinCrack. All rights reserved.</p>
         
         <!-- Social links -->
         <div class="flex space-x-3 ml-0 md:ml-4">

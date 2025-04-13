@@ -1242,7 +1242,7 @@ const _BYv2cCSsuf9s1mcIuNvFsgS6knottejSkeH6zoUiAQA = (function(nitro) {
 
 const rootDir = "E:/FinCrack/frontend";
 
-const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Advanced financial management platform for modern investors and traders"}],"link":[{"rel":"icon","type":"image/x-icon","href":"/favicon.ico"},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Gugi&display=swap"},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Varela+Round&display=swap"}],"style":[],"script":[],"noscript":[],"title":"FinHack - Modern Financial Solutions"};
+const appHead = {"meta":[{"name":"viewport","content":"width=device-width, initial-scale=1"},{"charset":"utf-8"},{"name":"description","content":"Advanced financial management platform for modern investors and traders"}],"link":[{"rel":"icon","type":"image/x-icon","href":"/favicon.ico"},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Gugi&display=swap"},{"rel":"stylesheet","href":"https://fonts.googleapis.com/css2?family=Varela+Round&display=swap"}],"style":[],"script":[],"noscript":[],"title":"FinCrack - Modern Financial Solutions"};
 
 const appRootTag = "div";
 
@@ -4803,7 +4803,7 @@ const MOCK_NEWS = [
     id: 1,
     image: "https://example.com/images/1.jpg",
     related: "AAPL",
-    source: "FinHack News",
+    source: "FinCrack News",
     summary: "The company reported earnings that exceeded market expectations, driving stock price up by 5% in after-hours trading.",
     url: "https://example.com/news/1"
   },
@@ -4870,7 +4870,7 @@ const stockNews = defineEventHandler(async (event) => {
       `${FINNHUB_BASE_URL}/company-news?symbol=${String(symbol)}&from=${fromDate}&to=${toDate}&token=${API_KEY}`,
       {
         headers: {
-          "User-Agent": "FinHack/1.0",
+          "User-Agent": "FinCrack/1.0",
           "Content-Type": "application/json"
         }
       }

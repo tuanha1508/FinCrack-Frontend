@@ -96,7 +96,7 @@ export async function getQuote(symbol: string): Promise<Quote> {
     const encodedSymbol = encodeURIComponent(symbol.trim().toUpperCase());
     const response = await fetch(FINNHUB_ENDPOINTS.QUOTE(encodedSymbol), {
       headers: {
-        'User-Agent': 'FinHack/1.0'
+        'User-Agent': 'FinCrack/1.0'
       }
     });
 
@@ -126,7 +126,7 @@ export async function getCompanyProfile(symbol: string): Promise<CompanyProfile 
     const encodedSymbol = encodeURIComponent(symbol.trim().toUpperCase());
     const response = await fetch(FINNHUB_ENDPOINTS.COMPANY_PROFILE(encodedSymbol), {
       headers: {
-        'User-Agent': 'FinHack/1.0'
+        'User-Agent': 'FinCrack/1.0'
       }
     });
 
@@ -163,7 +163,7 @@ export async function searchSymbols(query: string): Promise<SymbolSearchResult[]
     const encodedQuery = encodeURIComponent(query.trim());
     const response = await fetch(FINNHUB_ENDPOINTS.SYMBOL_SEARCH(encodedQuery), {
       headers: {
-        'User-Agent': 'FinHack/1.0'
+        'User-Agent': 'FinCrack/1.0'
       }
     });
 
@@ -211,7 +211,7 @@ export async function getCompanyNews(symbol: string, from: string, to: string): 
     const encodedSymbol = encodeURIComponent(symbol.trim().toUpperCase());
     const response = await fetch(FINNHUB_ENDPOINTS.COMPANY_NEWS(encodedSymbol, from, to), {
       headers: {
-        'User-Agent': 'FinHack/1.0'
+        'User-Agent': 'FinCrack/1.0'
       }
     });
 
@@ -241,7 +241,7 @@ export async function getMarketNews(): Promise<NewsArticle[]> {
   try {
     const response = await fetch(FINNHUB_ENDPOINTS.MARKET_NEWS(), {
       headers: {
-        'User-Agent': 'FinHack/1.0'
+        'User-Agent': 'FinCrack/1.0'
       }
     });
 
@@ -278,7 +278,7 @@ export async function getFinancials(symbol: string): Promise<FinancialMetrics | 
     const encodedSymbol = encodeURIComponent(symbol.trim().toUpperCase());
     const response = await fetch(FINNHUB_ENDPOINTS.FINANCIALS(encodedSymbol), {
       headers: {
-        'User-Agent': 'FinHack/1.0'
+        'User-Agent': 'FinCrack/1.0'
       }
     });
 
@@ -315,7 +315,7 @@ export async function getEarnings(symbol: string): Promise<EarningsData[]> {
     const encodedSymbol = encodeURIComponent(symbol.trim().toUpperCase());
     const response = await fetch(FINNHUB_ENDPOINTS.EARNINGS(encodedSymbol), {
       headers: {
-        'User-Agent': 'FinHack/1.0'
+        'User-Agent': 'FinCrack/1.0'
       }
     });
 

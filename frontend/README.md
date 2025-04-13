@@ -1,4 +1,4 @@
-# FinHack Frontend
+# FinCrack Frontend
 
 A modern financial web application built with Nuxt 3, Vue 3, TypeScript, and Tailwind CSS.
 

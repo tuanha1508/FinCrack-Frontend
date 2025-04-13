@@ -16,7 +16,7 @@
             sidebarExpanded ? 'opacity-100' : 'opacity-0'
           ]"
         >
-          FinHack
+          FinCrack
         </h1>
       </div>
       

@@ -3,7 +3,7 @@
     <!-- Left side: branding and background -->
     <div class="w-full md:w-1/2 hidden md:flex items-center justify-center bg-gradient-to-r from-gray-900 to-black p-6">
       <div class="max-w-md">
-        <h1 class="text-4xl font-bold text-white mb-6">FinHack</h1>
+        <h1 class="text-4xl font-bold text-white mb-6">FinCrack</h1>
         <p class="text-gray-300 text-xl leading-relaxed mb-8">Your Financial Journey Starts Here.</p>
         <div class="space-y-4 text-gray-400">
           <div class="flex items-center">

@@ -4,6 +4,8 @@
 /* Tailwind import (v4 syntax) */
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 /* Tailwind directives */
 @tailwind base;
 @tailwind components;
@@ -343,5 +345,14 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
   }
 }

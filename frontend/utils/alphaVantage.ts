@@ -102,7 +102,7 @@ export async function searchTickers(keywords: string): Promise<TickerSearchResul
     
     const response = await fetch(finnhubUrl, {
       headers: {
-        'User-Agent': 'FinHack/1.0',
+        'User-Agent': 'FinCrack/1.0',
         'X-Finnhub-Token': FINNHUB_API_KEY
       }
     });
@@ -156,7 +156,7 @@ export async function getCompanyOverview(symbol: string): Promise<CompanyOvervie
     const profileUrl = `https://finnhub.io/api/v1/stock/profile2?symbol=${encodedSymbol}&token=${FINNHUB_API_KEY}`;
     const profileResponse = await fetch(profileUrl, {
       headers: {
-        'User-Agent': 'FinHack/1.0',
+        'User-Agent': 'FinCrack/1.0',
         'X-Finnhub-Token': FINNHUB_API_KEY
       }
     });
@@ -176,7 +176,7 @@ export async function getCompanyOverview(symbol: string): Promise<CompanyOvervie
     const financialsUrl = `https://finnhub.io/api/v1/stock/metric?symbol=${encodedSymbol}&metric=all&token=${FINNHUB_API_KEY}`;
     const financialsResponse = await fetch(financialsUrl, {
       headers: {
-        'User-Agent': 'FinHack/1.0',
+        'User-Agent': 'FinCrack/1.0',
         'X-Finnhub-Token': FINNHUB_API_KEY
       }
     });

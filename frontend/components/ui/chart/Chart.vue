@@ -16,6 +16,19 @@ import type { Chart, ChartType, ChartOptions, ChartData } from 'chart.js';
 interface SeriesItem {
   name?: string;
   data: number[];
+  backgroundColor?: string;
+  borderColor?: string;
+  fill?: boolean;
+  tension?: number;
+  pointBackgroundColor?: string;
+  pointBorderColor?: string;
+  pointHoverBackgroundColor?: string;
+  pointHoverBorderColor?: string;
+  borderWidth?: number;
+  pointBorderWidth?: number;
+  pointHoverBorderWidth?: number;
+  pointRadius?: number;
+  pointHoverRadius?: number;
   [key: string]: any;
 }
 
@@ -73,16 +86,37 @@ const getChartData = (): ChartData => {
   return {
     labels: props.categories,
     datasets: props.series.map((item: SeriesItem, index: number) => {
-      const colors = ['#2563eb', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
-      const color = colors[index % colors.length];
+      // Define default colors as fallback
+      const defaultColors = ['#2563eb', '#06b6d4', '#10b981', '#f59e0b', '#ef4444'];
+      const defaultColor = defaultColors[index % defaultColors.length];
       
+      // Construct dataset, prioritizing properties from the series item
       return {
         label: item.name || `Series ${index + 1}`,
         data: item.data,
-        backgroundColor: props.type === 'line' ? 'transparent' : color,
-        borderColor: color,
-        fill: props.type === 'area',
-        tension: 0.4
+        // Use item's colors if provided, else fallback to default or type-specific logic
+        backgroundColor: item.backgroundColor !== undefined 
+          ? item.backgroundColor 
+          : (props.type === 'line' || props.type === 'radar' ? 'transparent' : defaultColor),
+        borderColor: item.borderColor || defaultColor,
+        // Apply point styling from item if provided
+        pointBackgroundColor: item.pointBackgroundColor, 
+        pointBorderColor: item.pointBorderColor,
+        pointHoverBackgroundColor: item.pointHoverBackgroundColor,
+        pointHoverBorderColor: item.pointHoverBorderColor,
+        // Apply border width from item if provided
+        borderWidth: item.borderWidth,
+        pointBorderWidth: item.pointBorderWidth,
+        pointHoverBorderWidth: item.pointHoverBorderWidth,
+        // Apply point radius from item if provided
+        pointRadius: item.pointRadius,
+        pointHoverRadius: item.pointHoverRadius,
+        // Use item's fill setting if provided, else default based on type
+        fill: item.fill !== undefined ? item.fill : props.type === 'area',
+        // Use item's tension setting if provided, else default
+        tension: item.tension !== undefined ? item.tension : 0.4,
+        // Allow other dataset options from item to be passed through
+        // Note: Be cautious with spreading item blindly if it conflicts with core settings
       };
     })
   };

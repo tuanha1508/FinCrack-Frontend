@@ -1,17 +1,15 @@
 <template>
   <div>
     <HeroSection />
-    <TeamSection />
-    <MarketTrendsSection />
-    <CalculatorSection />
-    <FaqSection />
+    <FeaturesSection />
+    <DemoSection />
+    <CallToActionSection />
   </div>
 </template>
 
 <script setup lang="ts">
 import HeroSection from '@/components/about/HeroSection.vue'
-import TeamSection from '@/components/about/TeamSection.vue'
-import MarketTrendsSection from '@/components/about/MarketTrendsSection.vue'
-import CalculatorSection from '@/components/about/CalculatorSection.vue'
-import FaqSection from '@/components/about/FaqSection.vue'
+import FeaturesSection from '@/components/about/FeaturesSection.vue'
+import DemoSection from '@/components/about/DemoSection.vue'
+import CallToActionSection from '@/components/about/CallToActionSection.vue'
 </script>

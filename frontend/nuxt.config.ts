@@ -55,7 +55,7 @@ export default defineNuxtConfig({
 
   app: {
     head: {
-      title: 'FinHack - Modern Financial Solutions',
+      title: 'FinCrack - Modern Financial Solutions',
       meta: [
         { name: 'description', content: 'Advanced financial management platform for modern investors and traders' }
       ],

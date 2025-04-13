@@ -4,7 +4,7 @@
       <!-- Logo (Absolute Left) -->
       <div class="absolute left-4 top-1/2 -translate-y-1/2">
         <NuxtLink to="/" class="flex items-center gap-2 font-bold text-sm" :class="isDark ? 'text-white' : 'text-black'">
-          FinHack
+          FinCrack
         </NuxtLink>
       </div>
 

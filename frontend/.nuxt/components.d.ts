@@ -15,7 +15,10 @@ interface _GlobalComponents {
       'CompanySearch': typeof import("../components/CompanySearch.vue")['default']
     'SidebarNavigation': typeof import("../components/SidebarNavigation.vue")['default']
     'AboutCalculatorSection': typeof import("../components/about/CalculatorSection.vue")['default']
+    'AboutCallToActionSection': typeof import("../components/about/CallToActionSection.vue")['default']
+    'AboutDemoSection': typeof import("../components/about/DemoSection.vue")['default']
     'AboutFaqSection': typeof import("../components/about/FaqSection.vue")['default']
+    'AboutFeaturesSection': typeof import("../components/about/FeaturesSection.vue")['default']
     'AboutHeroSection': typeof import("../components/about/HeroSection.vue")['default']
     'AboutMarketTrendsSection': typeof import("../components/about/MarketTrendsSection.vue")['default']
     'AboutTeamSection': typeof import("../components/about/TeamSection.vue")['default']
@@ -92,7 +95,6 @@ interface _GlobalComponents {
     'IconCSS': typeof import("../node_modules/nuxt-icon/dist/runtime/IconCSS.vue")['default']
     'ColorScheme': typeof import("../node_modules/@nuxtjs/color-mode/dist/runtime/component.vue3.vue")['default']
     'Button': typeof import("../components/ui/button/index")['Button']
-    'Chart': typeof import("../components/ui/chart/index")['Chart']
     'Card': typeof import("../components/ui/card/index")['Card']
     'CardAction': typeof import("../components/ui/card/index")['CardAction']
     'CardContent': typeof import("../components/ui/card/index")['CardContent']
@@ -100,10 +102,11 @@ interface _GlobalComponents {
     'CardFooter': typeof import("../components/ui/card/index")['CardFooter']
     'CardHeader': typeof import("../components/ui/card/index")['CardHeader']
     'CardTitle': typeof import("../components/ui/card/index")['CardTitle']
+    'Chart': typeof import("../components/ui/chart/index")['Chart']
     'Checkbox': typeof import("../components/ui/checkbox/index")['Checkbox']
-    'CustomButton': typeof import("../components/ui/custombutton/index")['CustomButton']
     'FormInput': typeof import("../components/ui/forminput/index")['FormInput']
     'Input': typeof import("../components/ui/input/index")['Input']
+    'CustomButton': typeof import("../components/ui/custombutton/index")['CustomButton']
     'Label': typeof import("../components/ui/label/index")['Label']
     'RadioGroup': typeof import("../components/ui/radio-group/index")['RadioGroup']
     'RadioGroupItem': typeof import("../components/ui/radio-group/index")['RadioGroupItem']
@@ -134,7 +137,10 @@ interface _GlobalComponents {
       'LazyCompanySearch': LazyComponent<typeof import("../components/CompanySearch.vue")['default']>
     'LazySidebarNavigation': LazyComponent<typeof import("../components/SidebarNavigation.vue")['default']>
     'LazyAboutCalculatorSection': LazyComponent<typeof import("../components/about/CalculatorSection.vue")['default']>
+    'LazyAboutCallToActionSection': LazyComponent<typeof import("../components/about/CallToActionSection.vue")['default']>
+    'LazyAboutDemoSection': LazyComponent<typeof import("../components/about/DemoSection.vue")['default']>
     'LazyAboutFaqSection': LazyComponent<typeof import("../components/about/FaqSection.vue")['default']>
+    'LazyAboutFeaturesSection': LazyComponent<typeof import("../components/about/FeaturesSection.vue")['default']>
     'LazyAboutHeroSection': LazyComponent<typeof import("../components/about/HeroSection.vue")['default']>
     'LazyAboutMarketTrendsSection': LazyComponent<typeof import("../components/about/MarketTrendsSection.vue")['default']>
     'LazyAboutTeamSection': LazyComponent<typeof import("../components/about/TeamSection.vue")['default']>
@@ -211,7 +217,6 @@ interface _GlobalComponents {
     'LazyIconCSS': LazyComponent<typeof import("../node_modules/nuxt-icon/dist/runtime/IconCSS.vue")['default']>
     'LazyColorScheme': LazyComponent<typeof import("../node_modules/@nuxtjs/color-mode/dist/runtime/component.vue3.vue")['default']>
     'LazyButton': LazyComponent<typeof import("../components/ui/button/index")['Button']>
-    'LazyChart': LazyComponent<typeof import("../components/ui/chart/index")['Chart']>
     'LazyCard': LazyComponent<typeof import("../components/ui/card/index")['Card']>
     'LazyCardAction': LazyComponent<typeof import("../components/ui/card/index")['CardAction']>
     'LazyCardContent': LazyComponent<typeof import("../components/ui/card/index")['CardContent']>
@@ -219,10 +224,11 @@ interface _GlobalComponents {
     'LazyCardFooter': LazyComponent<typeof import("../components/ui/card/index")['CardFooter']>
     'LazyCardHeader': LazyComponent<typeof import("../components/ui/card/index")['CardHeader']>
     'LazyCardTitle': LazyComponent<typeof import("../components/ui/card/index")['CardTitle']>
+    'LazyChart': LazyComponent<typeof import("../components/ui/chart/index")['Chart']>
     'LazyCheckbox': LazyComponent<typeof import("../components/ui/checkbox/index")['Checkbox']>
-    'LazyCustomButton': LazyComponent<typeof import("../components/ui/custombutton/index")['CustomButton']>
     'LazyFormInput': LazyComponent<typeof import("../components/ui/forminput/index")['FormInput']>
     'LazyInput': LazyComponent<typeof import("../components/ui/input/index")['Input']>
+    'LazyCustomButton': LazyComponent<typeof import("../components/ui/custombutton/index")['CustomButton']>
     'LazyLabel': LazyComponent<typeof import("../components/ui/label/index")['Label']>
     'LazyRadioGroup': LazyComponent<typeof import("../components/ui/radio-group/index")['RadioGroup']>
     'LazyRadioGroupItem': LazyComponent<typeof import("../components/ui/radio-group/index")['RadioGroupItem']>
@@ -259,7 +265,10 @@ declare module 'vue' {
 export const CompanySearch: typeof import("../components/CompanySearch.vue")['default']
 export const SidebarNavigation: typeof import("../components/SidebarNavigation.vue")['default']
 export const AboutCalculatorSection: typeof import("../components/about/CalculatorSection.vue")['default']
+export const AboutCallToActionSection: typeof import("../components/about/CallToActionSection.vue")['default']
+export const AboutDemoSection: typeof import("../components/about/DemoSection.vue")['default']
 export const AboutFaqSection: typeof import("../components/about/FaqSection.vue")['default']
+export const AboutFeaturesSection: typeof import("../components/about/FeaturesSection.vue")['default']
 export const AboutHeroSection: typeof import("../components/about/HeroSection.vue")['default']
 export const AboutMarketTrendsSection: typeof import("../components/about/MarketTrendsSection.vue")['default']
 export const AboutTeamSection: typeof import("../components/about/TeamSection.vue")['default']
@@ -336,7 +345,6 @@ export const Icon: typeof import("../node_modules/nuxt-icon/dist/runtime/Icon.vu
 export const IconCSS: typeof import("../node_modules/nuxt-icon/dist/runtime/IconCSS.vue")['default']
 export const ColorScheme: typeof import("../node_modules/@nuxtjs/color-mode/dist/runtime/component.vue3.vue")['default']
 export const Button: typeof import("../components/ui/button/index")['Button']
-export const Chart: typeof import("../components/ui/chart/index")['Chart']
 export const Card: typeof import("../components/ui/card/index")['Card']
 export const CardAction: typeof import("../components/ui/card/index")['CardAction']
 export const CardContent: typeof import("../components/ui/card/index")['CardContent']
@@ -344,10 +352,11 @@ export const CardDescription: typeof import("../components/ui/card/index")['Card
 export const CardFooter: typeof import("../components/ui/card/index")['CardFooter']
 export const CardHeader: typeof import("../components/ui/card/index")['CardHeader']
 export const CardTitle: typeof import("../components/ui/card/index")['CardTitle']
+export const Chart: typeof import("../components/ui/chart/index")['Chart']
 export const Checkbox: typeof import("../components/ui/checkbox/index")['Checkbox']
-export const CustomButton: typeof import("../components/ui/custombutton/index")['CustomButton']
 export const FormInput: typeof import("../components/ui/forminput/index")['FormInput']
 export const Input: typeof import("../components/ui/input/index")['Input']
+export const CustomButton: typeof import("../components/ui/custombutton/index")['CustomButton']
 export const Label: typeof import("../components/ui/label/index")['Label']
 export const RadioGroup: typeof import("../components/ui/radio-group/index")['RadioGroup']
 export const RadioGroupItem: typeof import("../components/ui/radio-group/index")['RadioGroupItem']
@@ -378,7 +387,10 @@ export const NuxtRouteAnnouncer: IslandComponent<typeof import("../node_modules/
 export const LazyCompanySearch: LazyComponent<typeof import("../components/CompanySearch.vue")['default']>
 export const LazySidebarNavigation: LazyComponent<typeof import("../components/SidebarNavigation.vue")['default']>
 export const LazyAboutCalculatorSection: LazyComponent<typeof import("../components/about/CalculatorSection.vue")['default']>
+export const LazyAboutCallToActionSection: LazyComponent<typeof import("../components/about/CallToActionSection.vue")['default']>
+export const LazyAboutDemoSection: LazyComponent<typeof import("../components/about/DemoSection.vue")['default']>
 export const LazyAboutFaqSection: LazyComponent<typeof import("../components/about/FaqSection.vue")['default']>
+export const LazyAboutFeaturesSection: LazyComponent<typeof import("../components/about/FeaturesSection.vue")['default']>
 export const LazyAboutHeroSection: LazyComponent<typeof import("../components/about/HeroSection.vue")['default']>
 export const LazyAboutMarketTrendsSection: LazyComponent<typeof import("../components/about/MarketTrendsSection.vue")['default']>
 export const LazyAboutTeamSection: LazyComponent<typeof import("../components/about/TeamSection.vue")['default']>
@@ -455,7 +467,6 @@ export const LazyIcon: LazyComponent<typeof import("../node_modules/nuxt-icon/di
 export const LazyIconCSS: LazyComponent<typeof import("../node_modules/nuxt-icon/dist/runtime/IconCSS.vue")['default']>
 export const LazyColorScheme: LazyComponent<typeof import("../node_modules/@nuxtjs/color-mode/dist/runtime/component.vue3.vue")['default']>
 export const LazyButton: LazyComponent<typeof import("../components/ui/button/index")['Button']>
-export const LazyChart: LazyComponent<typeof import("../components/ui/chart/index")['Chart']>
 export const LazyCard: LazyComponent<typeof import("../components/ui/card/index")['Card']>
 export const LazyCardAction: LazyComponent<typeof import("../components/ui/card/index")['CardAction']>
 export const LazyCardContent: LazyComponent<typeof import("../components/ui/card/index")['CardContent']>
@@ -463,10 +474,11 @@ export const LazyCardDescription: LazyComponent<typeof import("../components/ui/
 export const LazyCardFooter: LazyComponent<typeof import("../components/ui/card/index")['CardFooter']>
 export const LazyCardHeader: LazyComponent<typeof import("../components/ui/card/index")['CardHeader']>
 export const LazyCardTitle: LazyComponent<typeof import("../components/ui/card/index")['CardTitle']>
+export const LazyChart: LazyComponent<typeof import("../components/ui/chart/index")['Chart']>
 export const LazyCheckbox: LazyComponent<typeof import("../components/ui/checkbox/index")['Checkbox']>
-export const LazyCustomButton: LazyComponent<typeof import("../components/ui/custombutton/index")['CustomButton']>
 export const LazyFormInput: LazyComponent<typeof import("../components/ui/forminput/index")['FormInput']>
 export const LazyInput: LazyComponent<typeof import("../components/ui/input/index")['Input']>
+export const LazyCustomButton: LazyComponent<typeof import("../components/ui/custombutton/index")['CustomButton']>
 export const LazyLabel: LazyComponent<typeof import("../components/ui/label/index")['Label']>
 export const LazyRadioGroup: LazyComponent<typeof import("../components/ui/radio-group/index")['RadioGroup']>
 export const LazyRadioGroupItem: LazyComponent<typeof import("../components/ui/radio-group/index")['RadioGroupItem']>

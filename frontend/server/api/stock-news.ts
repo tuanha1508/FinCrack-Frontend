@@ -44,7 +44,7 @@ const MOCK_NEWS = [
     id: 1,
     image: "https://example.com/images/1.jpg",
     related: "AAPL",
-    source: "FinHack News",
+    source: "FinCrack News",
     summary: "The company reported earnings that exceeded market expectations, driving stock price up by 5% in after-hours trading.",
     url: "https://example.com/news/1"
   },
@@ -130,7 +130,7 @@ export default defineEventHandler(async (event) => {
       `${FINNHUB_BASE_URL}/company-news?symbol=${String(symbol)}&from=${fromDate}&to=${toDate}&token=${API_KEY}`,
       {
         headers: {
-          'User-Agent': 'FinHack/1.0',
+          'User-Agent': 'FinCrack/1.0',
           'Content-Type': 'application/json'
         }
       }
